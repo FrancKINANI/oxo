@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f5f7f2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121917" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="OXO — comprendre les prix, l’inflation et les mécanismes économiques au Maroc." />
+    <title>OXO — Comprendre l’économie au Maroc</title>
+    <script>
+      // Applique le thème avant le premier rendu pour éviter un flash clair.
+      (function () {
+        try {
+          var stored = localStorage.getItem('oxo-theme')
+          var dark = stored
+            ? stored === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light'
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
