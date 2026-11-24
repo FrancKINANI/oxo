@@ -1,6 +1,7 @@
 import type { StepId } from '../../shared/steps'
 import type { Theme } from '../../shared/theme'
 import type { InfoKind } from './InfoDialog'
+import { fr } from '../../content/locales/fr'
 
 type TopbarProps = {
   step: StepId
@@ -29,31 +30,31 @@ export function Topbar({
         <button
           className="nav-toggle"
           type="button"
-          aria-label="Ouvrir le parcours"
+          aria-label={fr.app.openCourse}
           aria-expanded={navOpen}
           onClick={onOpenNav}
         >
           <span aria-hidden="true">☰</span>
         </button>
-        <a className="brand" href="#lesson" aria-label="OXO — haut de la leçon">
+        <a className="brand" href="#lesson" aria-label={fr.app.brandAria}>
           <span className="brand-mark" aria-hidden="true">
             <span /><span /><span />
           </span>
           <span className="brand-text">
             <strong>OXO</strong>
-            <small>Économie au Maroc</small>
+            <small>{fr.app.brandTagline}</small>
           </span>
         </a>
       </div>
 
-      <nav className="mode-tabs" aria-label="Modes">
+      <nav className="mode-tabs" aria-label={fr.app.modes}>
         <button
           className={`mode-tab ${step === 'observer' ? 'active' : ''}`}
           type="button"
           aria-current={step === 'observer' ? 'page' : undefined}
           onClick={() => onSelectStep('observer')}
         >
-          Apprendre
+          {fr.app.learn}
         </button>
         <button
           className={`mode-tab ${step === 'manipuler' ? 'active' : ''}`}
@@ -61,24 +62,24 @@ export function Topbar({
           aria-current={step === 'manipuler' ? 'page' : undefined}
           onClick={() => onSelectStep('manipuler')}
         >
-          Simuler
+          {fr.app.simulate}
         </button>
         <button className="mode-tab" type="button" onClick={() => onOpenInfo('sources')}>
-          Sources
+          {fr.app.sources}
         </button>
         <button className="mode-tab" type="button" onClick={() => onOpenInfo('glossaire')}>
-          Glossaire
+          {fr.app.glossary}
         </button>
       </nav>
 
       <div className="topbar-actions">
-        <span className="language-pill" aria-label="Langue du contenu : français">
-          FR
+        <span className="language-pill" aria-label={fr.app.languageAria}>
+          {fr.app.languageShort}
         </span>
         <button
           className="icon-button"
           type="button"
-          aria-label={dark ? 'Passer au thème clair' : 'Passer au thème sombre'}
+          aria-label={dark ? fr.app.switchToLight : fr.app.switchToDark}
           aria-pressed={dark}
           onClick={onThemeToggle}
         >

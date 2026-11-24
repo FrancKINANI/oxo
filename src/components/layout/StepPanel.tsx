@@ -2,6 +2,7 @@ import { formatDate } from '../../shared/format'
 import { stepNumber } from '../../shared/steps'
 import type { StepId } from '../../shared/steps'
 import { lessonMeta, primarySource, steps } from '../../content/lesson'
+import { fr } from '../../content/locales/fr'
 
 type StepPanelProps = {
   step: StepId
@@ -11,8 +12,8 @@ type StepPanelProps = {
 }
 
 const pills: Record<StepId, string> = {
-  observer: 'Observer',
-  manipuler: 'Manipuler',
+  observer: fr.lesson.stepLabels[0],
+  manipuler: fr.lesson.stepLabels[1],
 }
 
 export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPanelProps) {
@@ -22,7 +23,7 @@ export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPa
   return (
     <aside className="step-panel" aria-labelledby="step-panel-title">
       <div className="step-panel-head">
-        <span className="step-panel-kicker">Étape {number} / 2</span>
+        <span className="step-panel-kicker">{fr.lesson.stepSlash(number, 2)}</span>
         <span className="pill">{pills[step]}</span>
       </div>
 
@@ -30,7 +31,7 @@ export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPa
       <p className="step-panel-body">{current.narration.body}</p>
 
       <div className="key-idea">
-        <span className="key-idea-label">✦ Idée clé</span>
+        <span className="key-idea-label">{fr.lesson.idea}</span>
         <p>{current.narration.keyIdea}</p>
       </div>
 
@@ -41,25 +42,25 @@ export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPa
           disabled={number === 1}
           onClick={() => onSelectStep('observer')}
         >
-          ← Précédent
+          {fr.lesson.previous}
         </button>
         {number === 1 ? (
           <button className="primary-button" type="button" onClick={() => onSelectStep('manipuler')}>
-            Suivant →
+            {fr.lesson.next}
           </button>
         ) : (
           <button className="primary-button" type="button" onClick={onRestart}>
-            Recommencer
+            {fr.lesson.restart}
           </button>
         )}
       </div>
 
       <button className="tutor-cta" type="button" onClick={onOpenTutor}>
-        <span aria-hidden="true">✦</span> Demander au tuteur
+        <span aria-hidden="true">✦</span> {fr.lesson.askTutor}
       </button>
 
       <section className="youll-learn">
-        <h3>Vous allez apprendre</h3>
+        <h3>{fr.lesson.learningOutcomes}</h3>
         <ul>
           {current.narration.learn.map((item) => (
             <li key={item}>{item}</li>
@@ -68,18 +69,18 @@ export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPa
       </section>
 
       <div className="panel-source">
-        <span className="stat-label">Source principale</span>
+        <span className="stat-label">{fr.lesson.primarySource}</span>
         <p>
           <strong>{primarySource.publisher}</strong> — {primarySource.title}
         </p>
         <small>
-          Référence : {primarySource.referencePeriod} · vérifiée le{' '}
+          {fr.lesson.sourceReference} : {primarySource.referencePeriod} · {fr.lesson.sourceVerified}{' '}
           {formatDate(primarySource.checkedAt)}
         </small>
-        <small>Publiée le {formatDate(primarySource.publicationDate)} · snapshot {primarySource.snapshotId}</small>
-        <small>Révision éditoriale : {formatDate(lessonMeta.revision)}</small>
+        <small>{fr.lesson.sourcePublished} {formatDate(primarySource.publicationDate)} · snapshot {primarySource.snapshotId}</small>
+        <small>{fr.lesson.editorialRevision} : {formatDate(lessonMeta.revision)}</small>
         <a href={primarySource.url} target="_blank" rel="noopener noreferrer">
-          Consulter la source
+          {fr.lesson.consultSource}
         </a>
       </div>
     </aside>

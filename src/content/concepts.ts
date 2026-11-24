@@ -22,7 +22,7 @@ const files = import.meta.glob('../../content/morocco/concepts/*.md', {
 
 const requiredFields = ['Définition simple', 'Source', 'Date de revue'] as const
 
-function parse(file: string, raw: string): Concept {
+export function parseConceptMarkdown(file: string, raw: string): Concept {
   const lines = raw.split('\n')
   const term = lines.find((line) => line.startsWith('# '))?.slice(2).trim()
   const fields: Record<string, string> = {}
@@ -51,5 +51,5 @@ function parse(file: string, raw: string): Concept {
 }
 
 export const concepts: Concept[] = Object.entries(files)
-  .map(([file, raw]) => parse(file, raw))
+  .map(([file, raw]) => parseConceptMarkdown(file, raw))
   .sort((a, b) => a.term.localeCompare(b.term, 'fr'))

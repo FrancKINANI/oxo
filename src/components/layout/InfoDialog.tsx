@@ -2,6 +2,7 @@ import { useEffect, useId, useRef } from 'react'
 import { formatDate } from '../../shared/format'
 import { concepts } from '../../content/concepts'
 import { editorialReview, lessonMeta, primarySource } from '../../content/lesson'
+import { fr } from '../../content/locales/fr'
 
 export type InfoKind = 'glossaire' | 'sources'
 
@@ -11,8 +12,8 @@ type InfoDialogProps = {
 }
 
 const titles: Record<InfoKind, string> = {
-  glossaire: 'Glossaire',
-  sources: 'Sources et méthode',
+  glossaire: fr.dialogs.glossary,
+  sources: fr.dialogs.sources,
 }
 
 export function InfoDialog({ kind, onClose }: InfoDialogProps) {
@@ -34,7 +35,7 @@ export function InfoDialog({ kind, onClose }: InfoDialogProps) {
       <div className="modal" role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <header className="modal-head">
           <h2 id={titleId}>{titles[kind]}</h2>
-          <button ref={closeRef} className="icon-button small" type="button" aria-label="Fermer" onClick={onClose}>
+          <button ref={closeRef} className="icon-button small" type="button" aria-label={fr.dialogs.close} onClick={onClose}>
             <span aria-hidden="true">✕</span>
           </button>
         </header>
@@ -46,11 +47,11 @@ export function InfoDialog({ kind, onClose }: InfoDialogProps) {
                 <li key={concept.term}>
                   <h3>{concept.term}</h3>
                   <p>{concept.simpleDefinition}</p>
-                  {concept.example && <p className="glossary-extra"><strong>Exemple marocain · </strong>{concept.example}</p>}
-                  {concept.method && <p className="glossary-extra"><strong>Méthode · </strong>{concept.method}</p>}
-                  {concept.limit && <p className="glossary-extra"><strong>Limite · </strong>{concept.limit}</p>}
+                  {concept.example && <p className="glossary-extra"><strong>{fr.dialogs.conceptExample} </strong>{concept.example}</p>}
+                  {concept.method && <p className="glossary-extra"><strong>{fr.dialogs.method} </strong>{concept.method}</p>}
+                  {concept.limit && <p className="glossary-extra"><strong>{fr.dialogs.limit} </strong>{concept.limit}</p>}
                   <small>
-                    {concept.source} · revue le {concept.reviewed}
+                    {concept.source} · {fr.concepts.reviewed} {concept.reviewed}
                   </small>
                 </li>
               ))}
@@ -58,31 +59,29 @@ export function InfoDialog({ kind, onClose }: InfoDialogProps) {
           ) : (
             <div className="sources">
               <p>
-                Les chiffres affichés proviennent de publications officielles. Les variations
-                du simulateur sont des hypothèses pédagogiques, pas des données publiées.
+                {fr.dialogs.officialSources}
               </p>
               <dl>
-                <dt>Éditeur</dt>
+                <dt>{fr.dialogs.editor}</dt>
                 <dd>{primarySource.publisher}</dd>
-                <dt>Publication</dt>
+                <dt>{fr.dialogs.publication}</dt>
                 <dd>{primarySource.title}</dd>
-                <dt>Période de référence</dt>
+                <dt>{fr.dialogs.referencePeriod}</dt>
                 <dd>{primarySource.referencePeriod}</dd>
-                <dt>Date de publication</dt>
+                <dt>{fr.dialogs.publicationDate}</dt>
                 <dd>{formatDate(primarySource.publicationDate)}</dd>
-                <dt>Dernière vérification</dt>
+                <dt>{fr.dialogs.lastVerified}</dt>
                 <dd>{formatDate(primarySource.checkedAt)}</dd>
-                <dt>Révision éditoriale</dt>
+                <dt>{fr.dialogs.editorialRevision}</dt>
                 <dd>{formatDate(lessonMeta.revision)}</dd>
-                <dt>Statut éditorial</dt>
-                <dd>À valider ({formatDate(editorialReview.reviewedAt)})</dd>
+                <dt>{fr.dialogs.editorialStatus}</dt>
+                <dd>{fr.dialogs.editorialToReview} ({formatDate(editorialReview.reviewedAt)})</dd>
               </dl>
               <a href={primarySource.url} target="_blank" rel="noopener noreferrer">
-                Consulter la publication du HCP
+                {fr.dialogs.consultHcp}
               </a>
               <p className="sources-note">
-                OXO ne fournit ni conseil financier ni prévision. Une donnée non vérifiée
-                n’est pas publiée : elle est signalée comme hypothèse.
+                {fr.dialogs.sourcesDisclaimer}
               </p>
             </div>
           )}

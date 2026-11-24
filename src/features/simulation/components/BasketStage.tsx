@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import { formatDh, formatNumber, formatPercent } from '../../../shared/format'
 import { steps } from '../../../content/lesson'
 import { dataPoints, snapshotFor } from '../../../content/dataSnapshots'
+import { fr } from '../../../content/locales/fr'
 import type { BasketField } from '../model/useBasketSimulation'
 import type { BasketBreakdownItem, BasketSimulationInput } from '../model/calculateBasket'
 
@@ -25,7 +26,7 @@ function RangeControl({ id, label, field, weight, value, onChange }: RangeContro
       <div className="control-label">
         <label htmlFor={id}>
           <strong>{label}</strong>
-          <small>Poids : {weight}</small>
+          <small>{fr.simulation.weightCaption} : {weight}</small>
         </label>
         <output className="control-value" htmlFor={id}>{formatPercent(value)}</output>
       </div>
@@ -37,13 +38,13 @@ function RangeControl({ id, label, field, weight, value, onChange }: RangeContro
         step="1"
         value={value}
         style={{ '--fill': `${fill}%` } as CSSProperties}
-        aria-valuetext={`variation de ${formatPercent(value)}`}
+        aria-valuetext={fr.simulation.controlValue(formatPercent(value))}
         onChange={(event) => onChange(field, Number(event.target.value))}
       />
       <div className="range-bounds" aria-hidden="true">
-        <span>−20 %</span>
-        <span>0</span>
-        <span>+30 %</span>
+        <span>{fr.simulation.lowerBound}</span>
+        <span>{fr.simulation.neutralBound}</span>
+        <span>{fr.simulation.upperBound}</span>
       </div>
     </div>
   )
@@ -68,18 +69,16 @@ export function BasketStage({ variant, breakdown, totalDh, onChange, onUseOctobe
     <section className="stage" aria-labelledby="stage-title">
       <div className="stage-top">
         <span className="stage-label" id="stage-title">{stage.title}</span>
-        <span className="scenario-badge">{scenarioMode === 'observed' ? 'Scénario réel · octobre 2026' : stage.badge}</span>
+        <span className="scenario-badge">{scenarioMode === 'observed' ? fr.simulation.realScenarioBadge : stage.badge}</span>
       </div>
 
       <div className="scenario-select">
-        <p>Choisissez des données observées ou construisez une hypothèse libre.</p>
+        <p>{fr.simulation.chooseMode}</p>
         <button type="button" className="ghost-button" onClick={onUseOctober2026Scenario}>
-          Scénario réel octobre 2026
+          {fr.simulation.realScenario}
         </button>
         <p className="scenario-detail">
-          {scenarioMode === 'observed'
-            ? 'Alimentation +0,3 % et transport +11,6 % sur un an sont observés par le HCP. Logement est laissé à 0 % comme hypothèse pédagogique.'
-            : 'Mode libre : les variations saisies sont des hypothèses pédagogiques, pas des données observées.'}
+          {scenarioMode === 'observed' ? fr.simulation.observedDetail : fr.simulation.freeDetail}
         </p>
       </div>
 
@@ -109,7 +108,7 @@ export function BasketStage({ variant, breakdown, totalDh, onChange, onUseOctobe
       </div>
 
       <div className="stage-total">
-        <span>Total du panier</span>
+        <span>{fr.simulation.total}</span>
         <strong>{formatNumber(totalDh)} DH</strong>
       </div>
 
@@ -118,7 +117,7 @@ export function BasketStage({ variant, breakdown, totalDh, onChange, onUseOctobe
           id="control-food"
           label="Alimentation"
           field="foodPercent"
-          weight="40 % · hypothèse"
+          weight={fr.simulation.weight(40)}
           value={variant.foodPercent}
           onChange={onChange}
         />
@@ -126,7 +125,7 @@ export function BasketStage({ variant, breakdown, totalDh, onChange, onUseOctobe
           id="control-transport"
           label="Transport"
           field="transportPercent"
-          weight="25 % · hypothèse"
+          weight={fr.simulation.weight(25)}
           value={variant.transportPercent}
           onChange={onChange}
         />
@@ -134,15 +133,15 @@ export function BasketStage({ variant, breakdown, totalDh, onChange, onUseOctobe
           id="control-housing"
           label="Logement"
           field="housingPercent"
-          weight="35 % · hypothèse"
+          weight={fr.simulation.weight(35)}
           value={variant.housingPercent}
           onChange={onChange}
         />
       </div>
 
       <p className="weight-disclaimer">
-        Poids alimentaire officiel HCP : {new Intl.NumberFormat('fr-MA', { maximumFractionDigits: 2 }).format(officialFoodWeight.value)} % (base 2017). Tous les poids de ce modèle sont des hypothèses pédagogiques. 12 postes officiels vs 3 postes simplifiés.{' '}
-        <a href={weightSource.url} target="_blank" rel="noopener noreferrer">Source HCP</a>
+        {fr.simulation.weightDisclaimer(`${new Intl.NumberFormat('fr-MA', { maximumFractionDigits: 2 }).format(officialFoodWeight.value)} %`)}{' '}
+        <a href={weightSource.url} target="_blank" rel="noopener noreferrer">{fr.price.source}</a>
       </p>
 
       <p className="stage-note">{stage.note}</p>
