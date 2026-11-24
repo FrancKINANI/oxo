@@ -39,6 +39,7 @@ Le tuteur est local : ses réponses sont des règles déterministes dans
 | Coquille | Étape, thème, navigation, dialogues | `src/app/App.tsx` |
 | Routage d’étape | Lecture/écriture de `?etape=` | `src/app/route.ts` |
 | Primitives | Formatage, étapes, thème | `src/shared/format.ts`, `src/shared/steps.ts`, `src/shared/theme.ts` |
+| Focus modal | Piège de tabulation, fermeture Échap, retour au déclencheur | `src/shared/useFocusTrap.ts` |
 | Thème | `data-theme` + `localStorage` | `src/shared/theme.ts`, `public/theme-init.js` |
 | Contenu | Manifeste, projection, locales et snapshots HCP | `src/content/lessonManifest.ts`, `src/content/lesson.ts`, `src/content/locales/fr.ts`, `src/content/dataSnapshots.ts` |
 | Glossaire | Markdown compilé et validé | `src/content/concepts.ts`, `content/morocco/concepts/*.md` |
@@ -129,7 +130,7 @@ branche n’est pas active. Ce point est traité dans
 
 - **Pas de prérendu.** Le HTML initial ne contient pas le contenu de l’étape ; les robots
   d’aperçu social ne voient que les métadonnées génériques d’`index.html`.
-- **Piège de focus à compléter.** Les dialogues déplacent le focus et répondent à `Échap`, mais
-  la tabulation peut sortir de la boîte. Le lot D doit fournir une boucle partagée.
+- **Piège de focus partagé.** Les dialogues et le tuteur confinent la tabulation, se ferment avec
+  `Échap` et rendent le focus au déclencheur.
 - **Tuteur non génératif.** Les réponses couvrent un corpus fermé ; une question hors corpus
   reçoit une abstention explicite.

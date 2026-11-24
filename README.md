@@ -21,7 +21,7 @@ npm run dev
 | Commande | Effet |
 | --- | --- |
 | `npm run dev` | Serveur de développement Vite |
-| `npm run build` | Types puis bundle de production dans `dist/` |
+| `npm run build` | Validation du contenu, types puis bundle de production dans `dist/` |
 | `npm run preview` | Sert `dist/` localement |
 | `npm run verify` | Types, lint et tests — ce que la CI exige |
 | `npm test` | Tests seuls (Vitest) |
@@ -51,7 +51,7 @@ Le détail des flux et des décisions est dans [docs/architecture.md](docs/archi
 
 - Les chaînes d’interface vivent dans `src/content/locales/fr.ts`; la leçon dans son manifeste typé.
 - Les fiches du glossaire vivent dans `content/morocco/concepts/*.md`, avec les champs
-  `**Définition simple**`, `**Source**` et `**Date de revue**` obligatoires.
+  `**Définition simple**`, `**Source**`, `**Concepts liés**` et `**Date de revue**` obligatoires.
 - Une fiche incomplète fait échouer le build et la CI.
 - Toute correction de contenu met à jour la date de revue affichée.
 

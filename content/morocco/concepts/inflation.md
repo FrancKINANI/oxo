@@ -8,4 +8,6 @@
 
 **Limite** : une variation du panier personnel ne mesure pas seule l'inflation nationale.
 
+**Concepts liés** : Indice des prix à la consommation
+
 **Date de revue** : 20 novembre 2026.

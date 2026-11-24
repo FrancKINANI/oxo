@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useRef } from 'react'
 import { TutorPanel } from '../../features/tutor/components/TutorPanel'
 import { fr } from '../../content/locales/fr'
+import { useFocusTrap } from '../../shared/useFocusTrap'
 
 type TutorDockProps = {
   open: boolean
@@ -10,14 +11,8 @@ type TutorDockProps = {
 }
 
 export function TutorDock({ open, onOpen, onClose, onAbstention }: TutorDockProps) {
-  useEffect(() => {
-    if (!open) return
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [open, onClose])
+  const dockRef = useRef<HTMLDivElement>(null)
+  useFocusTrap(dockRef, open, onClose)
 
   return (
     <>
@@ -31,9 +26,11 @@ export function TutorDock({ open, onOpen, onClose, onAbstention }: TutorDockProp
         <span aria-hidden="true">✦</span> {fr.tutor.label}
       </button>
       <div
+        ref={dockRef}
         className={`tutor-dock ${open ? 'open' : ''}`}
         id="tutor-dock"
         role="dialog"
+        aria-modal={open}
         aria-label={fr.tutor.aria}
         inert={!open}
       >

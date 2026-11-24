@@ -50,6 +50,11 @@ describe('App', () => {
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Faites varier votre panier')
     expect(total()).toHaveTextContent('252 DH')
+    const foodSlider = screen.getByRole('slider', { name: /Alimentation/ })
+    expect(foodSlider.getAttribute('aria-valuetext')).toContain('Alimentation : variation')
+    expect(foodSlider.getAttribute('aria-valuetext')).toContain('poids 40 %')
+    foodSlider.focus()
+    expect(document.activeElement).toBe(foodSlider)
 
     fireEvent.change(screen.getByLabelText(/alimentation/i), { target: { value: '20' } })
 
@@ -149,18 +154,45 @@ describe('App', () => {
     expect(saved).not.toContain('Quelle météo fera-t-il demain')
   })
 
-  it('ouvre le glossaire et le referme avec Échap', async () => {
+  it('relie les concepts, piège le focus du glossaire et rend le focus au déclencheur', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByRole('button', { name: 'Glossaire' }))
+    const trigger = screen.getByRole('button', { name: 'Glossaire' })
+    await user.click(trigger)
 
     const dialog = screen.getByRole('dialog', { name: 'Glossaire' })
-    expect(within(dialog).getByText('Inflation')).toBeInTheDocument()
-    expect(within(dialog).getByText(/Indice des prix à la consommation/i)).toBeInTheDocument()
+    expect(within(dialog).getByRole('heading', { name: 'Inflation' })).toBeInTheDocument()
+    expect(within(dialog).getByRole('heading', { name: 'Indice des prix à la consommation' })).toBeInTheDocument()
+    expect(within(dialog).getByRole('link', { name: 'Indice des prix à la consommation' })).toHaveAttribute('href', '#concept-indice-des-prix-a-la-consommation')
+    const close = within(dialog).getByRole('button', { name: 'Fermer' })
+    expect(document.activeElement).toBe(close)
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true })
+    expect(document.activeElement).toBe(within(dialog).getByRole('link', { name: 'Indice des prix à la consommation' }))
+    fireEvent.keyDown(document, { key: 'Tab' })
+    expect(document.activeElement).toBe(close)
 
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('dialog', { name: 'Glossaire' })).not.toBeInTheDocument()
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it('piège le focus du tuteur et le rend au bouton après fermeture clavier', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    const trigger = screen.getByRole('button', { name: 'Tuteur' })
+    await user.click(trigger)
+
+    const dock = screen.getByRole('dialog', { name: /tuteur/i })
+    expect(dock).toHaveAttribute('aria-modal', 'true')
+    const first = within(dock).getByRole('button', { name: 'Effacer la conversation' })
+    const last = within(dock).getByLabelText('Votre question')
+    expect(document.activeElement).toBe(first)
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true })
+    expect(document.activeElement).toBe(last)
+
+    await user.keyboard('{Escape}')
+    expect(document.activeElement).toBe(trigger)
   })
 
   it('affiche les sources et leur date de vérification', async () => {

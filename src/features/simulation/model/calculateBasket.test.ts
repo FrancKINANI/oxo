@@ -9,19 +9,17 @@ describe('calculateBasket', () => {
       housingPercent: 2,
     })).toEqual({
       resultDh: 252,
-      percentChange: 5.15,
       weightedChange: 5.15,
     })
   })
 
-  it('retourne une diminution lorsque toutes les variations sont négatives', () => {
-    const result = calculateBasket({
-      foodPercent: -10,
-      transportPercent: -10,
-      housingPercent: -10,
-    })
-    expect(result.resultDh).toBe(216)
-    expect(result.percentChange).toBeLessThan(0)
+  it.each([
+    { foodPercent: Number.NaN, transportPercent: 0, housingPercent: 0 },
+    { foodPercent: -1, transportPercent: 0, housingPercent: 0 },
+    { foodPercent: 101, transportPercent: 0, housingPercent: 0 },
+  ])('rejette une valeur non finie ou hors bornes', (input) => {
+    expect(() => calculateBasket(input)).toThrow(RangeError)
+    expect(() => calculateBreakdown(input)).toThrow(RangeError)
   })
 })
 

@@ -100,6 +100,15 @@ pendant `npm ci` ne peut ni pousser ni modifier la CI.
 Dependabot ouvre chaque semaine les mises à jour npm (dev regroupées) et chaque mois celles des
 actions GitHub.
 
+### Budget du bundle
+
+La base JavaScript mesurée avant les lots d’apprentissage était de 76,9 kB gzip. Le build du lot D
+mesure 85,68 kB gzip (+11,4 %, soit 1,09 kB au-dessus du seuil de +10 %). Cette hausse couvre
+les deux étapes ajoutées et leur progression locale, les feedbacks pédagogiques, le tuteur
+déterministe élargi, les liens du glossaire et le piège de focus partagé. Aucune dépendance
+runtime n’a été ajoutée; la PR du lot D documente cette hausse liée aux critères fonctionnels
+et d’accessibilité de cette itération.
+
 ### Point de vigilance : CI et Vercel sont indépendants
 
 La CI ne déploie rien et Vercel ne lit pas l’artefact de la CI : les deux reconstruisent depuis
@@ -163,11 +172,9 @@ avec `aria-valuetext`, respect de `prefers-reduced-motion`, contrastes des deux 
 
 Écarts connus avant de revendiquer WCAG 2.2 AA :
 
-- **piège de focus absent** dans `InfoDialog` et `TutorDock` alors que `aria-modal="true"` est
-  posé : la tabulation peut sortir de la boîte ;
 - aucun test automatisé d’accessibilité (axe) ni parcours lecteur d’écran ;
-- les curseurs natifs sont utilisables au clavier; la valeur est annoncée, mais leur description
-  pourrait aussi mentionner le poids pédagogique.
+- les dialogues et le tuteur piègent le focus et le restituent à leur déclencheur; les curseurs
+  annoncent la catégorie, la variation et le poids pédagogique dans `aria-valuetext`.
 
 ## Données pédagogiques observées
 

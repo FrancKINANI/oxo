@@ -8,18 +8,26 @@ const repositoryRoot = fileURLToPath(new URL('../', import.meta.url))
 const conceptsDirectory = join(repositoryRoot, 'content/morocco/concepts')
 const files = (await readdir(conceptsDirectory)).filter((file) => file.endsWith('.md'))
 const conceptTerms = new Set()
+const conceptRelations = []
 
 if (files.length === 0) throw new Error('Validation du contenu impossible : aucune fiche de concept trouvée')
 
 for (const file of files) {
   const content = await readFile(join(conceptsDirectory, file), 'utf8')
   const title = content.match(/^#\s+(.+)$/m)?.[1]?.trim()
-  const required = ['Définition simple', 'Source', 'Date de revue']
+  const required = ['Définition simple', 'Source', 'Date de revue', 'Concepts liés']
   const missing = required.filter((field) => !new RegExp(`^\\*\\*${field}\\*\\*\\s*:\\s*.+$`, 'm').test(content))
   if (!title || missing.length) {
     throw new Error(`Fiche de concept invalide (${file}) : champ(s) manquant(s) — ${[!title && 'titre', ...missing].filter(Boolean).join(', ')}`)
   }
   conceptTerms.add(title)
+  const related = content.match(/^\*\*Concepts liés\*\*\s*:\s*(.+)$/m)?.[1]
+  if (related) conceptRelations.push({ file, terms: related.split(',').map((term) => term.trim()).filter(Boolean) })
+}
+
+for (const relation of conceptRelations) {
+  const missing = relation.terms.filter((term) => !conceptTerms.has(term))
+  if (missing.length) throw new Error(`Fiche de concept invalide (${relation.file}) : concept(s) lié(s) inconnu(s) — ${missing.join(', ')}`)
 }
 
 validateConceptGraph()
