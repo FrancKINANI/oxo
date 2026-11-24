@@ -59,11 +59,42 @@ curl -sI https://<domaine>/ | grep -i -E 'content-security|strict-transport|x-co
 | `/theme-init.js` | `max-age=0, must-revalidate` | Doit suivre une correction de thème immédiatement. |
 | `index.html` | cache par défaut de l’hébergeur | Ne jamais le rendre immuable : il référence les assets hachés. |
 
+## Sécurité applicative
+
+État mesuré le 24 novembre 2026, à revoir à chaque montée de version :
+
+| Contrôle | Résultat | Portée |
+| --- | --- | --- |
+| `npm audit` (toutes dépendances) | 0 vulnérabilité connue | Met à jour la base dès qu’une alerte sort |
+| `npm audit --omit=dev` | 0 vulnérabilité | Le runtime ne dépend que de `react`, `react-dom`, `scheduler` |
+| `npm audit signatures` | 100 paquets signés, 45 attestations | Provenance vérifiée contre le registre npm |
+| Scripts d’installation | 1 seul (`fsevents`, optionnel et macOS) | Aucun paquet npm n’exécute de code arbitraire à l’installation |
+| Sinks XSS | Aucun `innerHTML`, `dangerouslySetInnerHTML`, `eval`, `new Function` | Le contenu Markdown est découpé en texte React, jamais injecté en HTML |
+| Liens sortants | `target="_blank"` toujours avec `rel="noopener noreferrer"` | Pas de prise de contrôle de l’onglet d’origine |
+| Secrets | Aucun fichier `.env`, aucune clé dans le dépôt ou le bundle | Rien à faire fuiter : le produit n’a pas de backend |
+| Entrées non fiables | `?etape=` validé contre une liste fermée, thème validé en `light`/`dark` | Une valeur inconnue retombe sur le comportement par défaut |
+
+Les deux seuls textes lus depuis l’extérieur sont le paramètre d’URL et `localStorage`. Tous deux
+sont validés par liste blanche ou comparaison stricte, donc ni injection ni pollution de
+prototype n’est possible par ces chemins.
+
+La CI refuse désormais un `npm audit` qui remonte une vulnérabilité haute ou critique
+(`--audit-level=high`). C’est un cliquet : une dépendance introduite avec une faille connue casse
+la construction avant d’atteindre la production.
+
+Dependabot reste le mécanisme de correction : PR hebdomadaires pour npm, mensuelles pour les
+actions GitHub. Une alerte critique non corrigeable doit être traitée comme un incident, pas
+contournée en désactivant le contrôle.
+
 ## Intégration continue
 
 `.github/workflows/ci.yml` s’exécute sur chaque pull request et sur chaque push vers `main` :
-`npm ci`, types, lint, tests, build, puis dépôt de `dist` en artefact sept jours. Une exécution
-en cours est annulée par la suivante sur la même référence.
+`npm ci`, audit des dépendances, types, lint, tests, build, puis dépôt de `dist` en artefact
+sept jours. Une exécution en cours est annulée par la suivante sur la même référence.
+
+Le job tourne avec `permissions: contents: read` et `persist-credentials: false` : le jeton
+GitHub n’est pas inscriptible et reste hors du dépôt cloné, donc un paquet compromis exécuté
+pendant `npm ci` ne peut ni pousser ni modifier la CI.
 
 Dependabot ouvre chaque semaine les mises à jour npm (dev regroupées) et chaque mois celles des
 actions GitHub.
