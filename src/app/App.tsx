@@ -15,6 +15,10 @@ import { PriceStage } from '../features/prices/components/PriceStage'
 import { BasketStage } from '../features/simulation/components/BasketStage'
 import { useBasketSimulation } from '../features/simulation/model/useBasketSimulation'
 import { fr } from '../content/locales/fr'
+import { STEPS } from '../shared/steps'
+import { InterpretStage } from '../features/lesson/components/InterpretStage'
+import { SynthesisStage } from '../features/lesson/components/SynthesisStage'
+import { useLearningProgress } from '../features/lesson/model/useLearningProgress'
 
 export function App() {
   const [theme, setTheme] = useState<Theme>(readTheme)
@@ -23,6 +27,7 @@ export function App() {
   const [tutorOpen, setTutorOpen] = useState(false)
   const [infoOpen, setInfoOpen] = useState<InfoKind | null>(null)
   const basket = useBasketSimulation()
+  const learning = useLearningProgress()
 
   useEffect(() => {
     writeStepToUrl(step)
@@ -35,6 +40,11 @@ export function App() {
   }
 
   function selectStep(next: StepId) {
+    const currentIndex = STEPS.findIndex((item) => item.id === step)
+    const nextIndex = STEPS.findIndex((item) => item.id === next)
+    if (nextIndex === currentIndex + 1) {
+      learning.record({ type: 'step_completed', stepId: step, conceptIds: ['inflation', 'ipc'] })
+    }
     setStep(next)
     setNavOpen(false)
     document.getElementById('lesson')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -77,14 +87,24 @@ export function App() {
 
           {step === 'observer' ? (
             <PriceStage />
-          ) : (
+          ) : step === 'manipuler' ? (
             <BasketStage
               variant={basket.variant}
               breakdown={basket.breakdown}
               totalDh={basket.result.resultDh}
-              onChange={basket.setField}
+              onChange={(field, value) => {
+                basket.setField(field, value)
+                learning.record({ type: 'hypothesis_changed', field, value })
+              }}
               onUseOctober2026Scenario={basket.useOctober2026Scenario}
               scenarioMode={basket.scenarioMode}
+            />
+          ) : step === 'interpreter' ? (
+            <InterpretStage onAnswer={learning.record} />
+          ) : (
+            <SynthesisStage
+              events={learning.events}
+              onFinish={() => learning.record({ type: 'step_completed', stepId: 'synthese', conceptIds: ['inflation', 'ipc'] })}
             />
           )}
 
@@ -103,6 +123,7 @@ export function App() {
         open={tutorOpen}
         onOpen={() => setTutorOpen(true)}
         onClose={() => setTutorOpen(false)}
+        onAbstention={() => learning.record({ type: 'tutor_abstention', reason: 'outside_corpus' })}
       />
 
       {infoOpen && <InfoDialog kind={infoOpen} onClose={() => setInfoOpen(null)} />}

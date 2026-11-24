@@ -4,11 +4,13 @@ import { cleanup, fireEvent, render, screen, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/vitest'
 import { App } from './App'
+import { LEARNING_STORAGE_KEY } from '../features/lesson/model/learningEvents'
 
 beforeEach(() => {
   Element.prototype.scrollIntoView = vi.fn()
   document.documentElement.dataset.theme = 'light'
   window.history.replaceState(null, '', '/')
+  localStorage.removeItem(LEARNING_STORAGE_KEY)
 })
 
 afterEach(cleanup)
@@ -95,6 +97,56 @@ describe('App', () => {
     render(<App />)
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Faites varier votre panier')
+  })
+
+  it('termine la boucle, explique un distracteur et conserve la progression locale', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Suivant →' }))
+    fireEvent.change(screen.getByLabelText(/alimentation/i), { target: { value: '12' } })
+    await user.click(screen.getByRole('button', { name: 'Suivant →' }))
+    expect(window.location.search).toBe('?etape=interpreter')
+    expect(screen.getAllByRole('group')).toHaveLength(4)
+
+    const reflection = 'Mon panier a des poids différents de la moyenne nationale.'
+    await user.type(screen.getByLabelText('Votre explication'), reflection)
+    expect(screen.getByText('panier — mentionné')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('radio', { name: /L’inflation générale a forcément augmenté/i }))
+    await user.click(screen.getAllByRole('button', { name: 'Vérifier ma réponse' })[0])
+    expect(screen.getByRole('status')).toHaveTextContent(/Un seul prix peut augmenter pour des raisons propres/i)
+
+    await user.click(screen.getByRole('button', { name: 'Suivant →' }))
+    expect(window.location.search).toBe('?etape=synthese')
+    expect(screen.getByRole('heading', { name: 'Votre progression sur cet appareil' })).toBeInTheDocument()
+    expect(screen.getByText(/Le prix des tomates augmente/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Terminer la leçon' }))
+    const saved = JSON.parse(localStorage.getItem(LEARNING_STORAGE_KEY) ?? '{}')
+    expect(saved.version).toBe(1)
+    expect(saved.events).toEqual(expect.arrayContaining([
+      expect.objectContaining({ type: 'step_completed', stepId: 'observer' }),
+      expect.objectContaining({ type: 'step_completed', stepId: 'manipuler' }),
+      expect.objectContaining({ type: 'hypothesis_changed', field: 'foodPercent', value: 12 }),
+      expect.objectContaining({ type: 'quiz_answered', itemId: 'one-price-is-not-inflation', correct: false, misconceptionId: 'hausse-un-prix-egale-inflation' }),
+      expect.objectContaining({ type: 'step_completed', stepId: 'interpreter' }),
+      expect.objectContaining({ type: 'step_completed', stepId: 'synthese' }),
+    ]))
+    expect(localStorage.getItem(LEARNING_STORAGE_KEY)).not.toContain(reflection)
+  })
+
+  it('enregistre une abstention sans conserver la question posée', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: 'Tuteur' }))
+    const dock = screen.getByRole('dialog', { name: /tuteur/i })
+    await user.type(within(dock).getByLabelText('Votre question'), 'Quelle météo fera-t-il demain ?')
+    await user.click(within(dock).getByRole('button', { name: 'Envoyer' }))
+
+    const saved = localStorage.getItem(LEARNING_STORAGE_KEY) ?? ''
+    expect(saved).toContain('tutor_abstention')
+    expect(saved).not.toContain('Quelle météo fera-t-il demain')
   })
 
   it('ouvre le glossaire et le referme avec Échap', async () => {

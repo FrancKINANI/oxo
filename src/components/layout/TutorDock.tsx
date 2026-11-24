@@ -6,9 +6,10 @@ type TutorDockProps = {
   open: boolean
   onOpen: () => void
   onClose: () => void
+  onAbstention: () => void
 }
 
-export function TutorDock({ open, onOpen, onClose }: TutorDockProps) {
+export function TutorDock({ open, onOpen, onClose, onAbstention }: TutorDockProps) {
   useEffect(() => {
     if (!open) return
     function handleKeyDown(event: KeyboardEvent) {
@@ -36,7 +37,7 @@ export function TutorDock({ open, onOpen, onClose }: TutorDockProps) {
         aria-label={fr.tutor.aria}
         inert={!open}
       >
-        <TutorPanel onClose={onClose} />
+        <TutorPanel onClose={onClose} onAbstention={onAbstention} />
       </div>
     </>
   )

@@ -23,17 +23,17 @@
 - [x] B004 Placer les chaînes UI dans le catalogue `fr` et retirer les chaînes d’interface des composants.
 - [x] B005 Définir les types/nœuds/arêtes du graphe de concepts sans moteur adaptatif.
 - [x] B006 Structurer la leçon inflation en observation, mécanisme, formalisation, limites et récupération; statut `to_review`; mettre à jour les tests/docs.
-- [ ] B007 Vérifier, construire, contrôler le budget gzip et livrer la PR Lot B après CI verte du lot A.
+- [x] B007 Vérifier, construire, contrôler le budget gzip et livrer la PR Lot B après CI verte du lot A (PR #6 fusionnée; CI verte).
 
 ## Lot C — Interpréter et synthèse
 
-- [ ] C001 Étendre `StepId`, routage et navigation aux étapes interpréter et synthèse.
-- [ ] C002 Ajouter les questions à misconception et des explications ciblées pour chaque mauvaise réponse.
-- [ ] C003 Ajouter une restitution libre avec mots-clés/grille d’auto-évaluation, sans correction générative.
-- [ ] C004 Ajouter la synthèse idée clé, limites, sources et prochaine étape.
-- [ ] C005 Définir des événements versionnés `step_completed`, `quiz_answered`, `hypothesis_changed`, `tutor_abstention`.
-- [ ] C006 Persister localement concepts vus, quiz réussis et révision; traiter proprement les données locales invalides.
-- [ ] C007 Tester le parcours complet et la persistance; vérifier/build puis PR Lot C après CI verte du lot B.
+- [x] C001 Étendre `StepId`, routage et navigation aux étapes interpréter et synthèse.
+- [x] C002 Ajouter les questions à misconception et des explications ciblées pour chaque mauvaise réponse.
+- [x] C003 Ajouter une restitution libre avec mots-clés/grille d'auto-évaluation, sans correction générative.
+- [x] C004 Ajouter la synthèse idée clé, limites, sources et prochaine étape.
+- [x] C005 Définir des événements versionnés `step_completed`, `quiz_answered`, `hypothesis_changed`, `tutor_abstention`.
+- [x] C006 Persister localement concepts vus, quiz réussis et révision; traiter proprement les données locales invalides.
+- [x] C007 Tester le parcours complet et la persistance; vérifier/build puis PR Lot C après CI verte du lot B.
 
 ## Lot D — Tuteur et accessibilité
 

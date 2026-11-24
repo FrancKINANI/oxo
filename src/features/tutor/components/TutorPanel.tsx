@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { tutorCopy } from '../../../content/lesson'
-import { tutorAnswer } from '../model/tutorAnswer'
+import { TUTOR_ABSTENTION_RESPONSE, tutorAnswer } from '../model/tutorAnswer'
 import { fr } from '../../../content/locales/fr'
 
 type ChatMessage = {
@@ -13,9 +13,10 @@ const initialMessage: ChatMessage = { role: 'assistant', text: tutorCopy.initial
 
 type TutorPanelProps = {
   onClose: () => void
+  onAbstention: () => void
 }
 
-export function TutorPanel({ onClose }: TutorPanelProps) {
+export function TutorPanel({ onClose, onAbstention }: TutorPanelProps) {
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([initialMessage])
   const listRef = useRef<HTMLDivElement>(null)
@@ -31,10 +32,12 @@ export function TutorPanel({ onClose }: TutorPanelProps) {
   function ask(question: string) {
     const trimmed = question.trim()
     if (!trimmed) return
+    const response = tutorAnswer(trimmed)
+    if (response === TUTOR_ABSTENTION_RESPONSE) onAbstention()
     setMessages((current) => [
       ...current,
       { role: 'user', text: trimmed },
-      { role: 'assistant', text: tutorAnswer(trimmed) },
+      { role: 'assistant', text: response },
     ])
   }
 

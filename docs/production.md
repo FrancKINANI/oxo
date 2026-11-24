@@ -34,7 +34,7 @@ frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests
 | Directive | Raison |
 | --- | --- |
 | `script-src 'self'` | Le seul script est le bundle ; l’amorçage du thème est dans `public/theme-init.js`, pas inline. |
-| `style-src 'self'` | La feuille est produite par Vite ; les variables des curseurs passent par le CSSOM, pas par un attribut `style`. Vérifié au navigateur sur les deux étapes. |
+| `style-src 'self'` | La feuille est produite par Vite ; les variables des curseurs passent par le CSSOM, pas par un attribut `style`. Vérifié sur les quatre étapes. |
 | `connect-src 'self'` | Aucun appel réseau aujourd’hui. **À élargir** le jour où un tuteur distant ou une mesure d’audience arrive. |
 | `img-src 'self' data:` | Favicon et images locales ; `data:` couvre les icônes inline. |
 | `frame-ancestors 'none'` | Interdit l’intégration en iframe (anti-clickjacking). |
@@ -74,9 +74,10 @@ curl -sI https://<domaine>/ | grep -i -E 'content-security|strict-transport|x-co
 | Secrets | Aucun fichier `.env`, aucune clé dans le dépôt ou le bundle | Rien à faire fuiter : le produit n’a pas de backend |
 | Entrées non fiables | `?etape=` validé contre une liste fermée, thème validé en `light`/`dark` | Une valeur inconnue retombe sur le comportement par défaut |
 
-Les deux seuls textes lus depuis l’extérieur sont le paramètre d’URL et `localStorage`. Tous deux
-sont validés par liste blanche ou comparaison stricte, donc ni injection ni pollution de
-prototype n’est possible par ces chemins.
+Les seules entrées lues au démarrage sont le paramètre d’URL et les clés locales du thème et de
+la progression. L’étape est validée contre les identifiants connus; les événements locaux sont
+validés par version et schéma avant lecture. Un stockage malformé est supprimé et remplacé par
+une progression vide. La restitution libre et les questions au tuteur ne sont pas enregistrées.
 
 La CI refuse désormais un `npm audit` qui remonte une vulnérabilité haute ou critique
 (`--audit-level=high`). C’est un cliquet : une dépendance introduite avec une faille connue casse
@@ -150,6 +151,10 @@ retenu, la liste minimale est :
 - mention de confidentialité et base légale ;
 - tests de non-régression sur les abstentions.
 
+La progression locale utilise la clé `oxo-learning-events-v1` et les événements
+`step_completed`, `quiz_answered`, `hypothesis_changed`, `tutor_abstention`. Aucun événement
+ne quitte le navigateur.
+
 ## Accessibilité
 
 En place : `lang="fr"`, lien d’évitement, repères sémantiques, focus visible, cibles de 44 px
@@ -182,14 +187,14 @@ l’indexation. En revanche, le contenu est rendu côté client et l’étape vi
 requête : les robots d’aperçu social ne verront qu’une carte générique, et chaque étape n’a pas
 d’URL indexable distincte.
 
-Si le référencement devient un objectif, deux voies : prérendu statique des deux étapes, ou
+Si le référencement devient un objectif, deux voies : prérendu statique des quatre étapes, ou
 pages HTML distinctes générées au build. Tant que l’acquisition passe par un lien direct, le
 coût ne se justifie pas.
 
 ## Runbook
 
-**Déployer.** Pousser sur `main` ; Vercel reconstruit. Vérifier ensuite la page d’accueil, le
-lien `/?etape=manipuler`, l’ouverture du glossaire et les en-têtes avec la commande `curl`
+**Déployer.** Pousser sur `main` ; Vercel reconstruit. Vérifier ensuite la page d’accueil, les
+liens `/?etape=manipuler`, `/?etape=interpreter` et `/?etape=synthese`, l’ouverture du glossaire et les en-têtes avec la commande `curl`
 ci-dessus.
 
 **Revenir en arrière.** Utiliser le retour arrière instantané de Vercel vers le déploiement

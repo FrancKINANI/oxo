@@ -1,5 +1,5 @@
 import { formatDate } from '../../shared/format'
-import { stepNumber } from '../../shared/steps'
+import { STEPS, stepNumber } from '../../shared/steps'
 import type { StepId } from '../../shared/steps'
 import { lessonMeta, primarySource, steps } from '../../content/lesson'
 import { fr } from '../../content/locales/fr'
@@ -11,20 +11,17 @@ type StepPanelProps = {
   onOpenTutor: () => void
 }
 
-const pills: Record<StepId, string> = {
-  observer: fr.lesson.stepLabels[0],
-  manipuler: fr.lesson.stepLabels[1],
-}
-
 export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPanelProps) {
   const current = steps[step]
   const number = stepNumber(step)
+  const previous = STEPS[number - 2]?.id
+  const next = STEPS[number]?.id
 
   return (
     <aside className="step-panel" aria-labelledby="step-panel-title">
       <div className="step-panel-head">
-        <span className="step-panel-kicker">{fr.lesson.stepSlash(number, 2)}</span>
-        <span className="pill">{pills[step]}</span>
+        <span className="step-panel-kicker">{fr.lesson.stepSlash(number, STEPS.length)}</span>
+        <span className="pill">{STEPS[number - 1].label}</span>
       </div>
 
       <h2 id="step-panel-title">{current.narration.title}</h2>
@@ -36,22 +33,11 @@ export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPa
       </div>
 
       <div className="step-actions">
-        <button
-          className="ghost-button"
-          type="button"
-          disabled={number === 1}
-          onClick={() => onSelectStep('observer')}
-        >
-          {fr.lesson.previous}
-        </button>
-        {number === 1 ? (
-          <button className="primary-button" type="button" onClick={() => onSelectStep('manipuler')}>
-            {fr.lesson.next}
-          </button>
+        {previous && <button className="ghost-button" type="button" onClick={() => onSelectStep(previous)}>{fr.lesson.previous}</button>}
+        {next ? (
+          <button className="primary-button" type="button" onClick={() => onSelectStep(next)}>{fr.lesson.next}</button>
         ) : (
-          <button className="primary-button" type="button" onClick={onRestart}>
-            {fr.lesson.restart}
-          </button>
+          <button className="primary-button" type="button" onClick={onRestart}>{fr.lesson.restart}</button>
         )}
       </div>
 

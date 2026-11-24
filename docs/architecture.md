@@ -15,17 +15,18 @@ Le visiteur charge un bundle statique depuis Vercel. `main.tsx` monte `App` dans
 `ErrorBoundary`, qui affiche un écran de secours plutôt qu’une page blanche si un rendu
 échoue.
 
-`App` est la seule coquille : elle tient l’étape courante, le thème, le tiroir de navigation
-et l’ouverture des dialogues, puis compose les quatre régions visibles — scènes d’étape,
+`App` est la seule coquille : elle tient l’étape courante, le thème, le tiroir de navigation,
+les dialogues et le journal local de progression, puis compose les quatre régions visibles — scènes d’étape,
 panneau d’étape, tuteur flottant, dialogues glossaire et sources. Le contenu et le calcul
 viennent de modules purs :
 
-- `src/content/lesson.ts` : projection typée de la leçon vers les deux étapes visibles ;
+- `src/content/lesson.ts` : projection typée des quatre étapes de la leçon ;
 - `src/content/lessonManifest.ts` : manifeste, blocs pédagogiques et validation ;
 - `src/content/conceptGraph.ts` : nœuds et prérequis typés, sans moteur adaptatif ;
 - `src/content/locales/fr.ts` : chaînes d’interface françaises et locale de repli ;
 - `src/content/dataSnapshots.ts` : snapshots HCP figés au build, séries, périodes, unités et provenance ;
 - `src/features/simulation/model/` : calcul du panier et hook d’état.
+- `src/features/lesson/` : quiz à feedback ciblé, synthèse, auto-évaluation et événements de progression versionnés.
 
 Le tuteur est local : ses réponses sont des règles déterministes dans
 `src/features/tutor/model/tutorAnswer.ts`. Aucun modèle externe n’est appelé.
@@ -43,6 +44,8 @@ Le tuteur est local : ses réponses sont des règles déterministes dans
 | Glossaire | Markdown compilé et validé | `src/content/concepts.ts`, `content/morocco/concepts/*.md` |
 | Scène 1 | Panier personnel face à l’IPC | `src/features/prices/components/PriceStage.tsx` |
 | Scène 2 | Simulation à hypothèses visibles | `src/features/simulation/components/BasketStage.tsx` |
+| Interpréter | Quiz et restitution libre | `src/features/lesson/components/InterpretStage.tsx` |
+| Synthèse | Idée clé, limites, sources et progression | `src/features/lesson/components/SynthesisStage.tsx` |
 | Modèle | Calcul pondéré et ventilation | `src/features/simulation/model/calculateBasket.ts` |
 | Panneau | Narration, source, actions | `src/components/layout/StepPanel.tsx` |
 | Tuteur | Règles locales, refus explicites | `src/features/tutor/` |
@@ -54,14 +57,17 @@ Pas de store global : l’état vit dans `App` et circule par props.
 
 | État | Portée | Persistance |
 | --- | --- | --- |
-| Étape courante | `App` | query `?etape=manipuler` via `history.replaceState` |
+| Étape courante | `App` | query `?etape=` parmi observer, manipuler, interpreter, synthese |
 | Thème clair/sombre | `App` + `<html data-theme>` | `localStorage["oxo-theme"]`, appliqué avant le premier rendu |
-| Panier simulé | `useBasketSimulation` | mémoire seulement ; « Recommencer » réinitialise |
+| Panier simulé | `useBasketSimulation` | mémoire seulement ; « Réinitialiser » réinitialise |
+| Progression et événements | `useLearningProgress` | `localStorage["oxo-learning-events-v1"]`, version 1; aucun texte libre ni message du tuteur |
 | Tiroir, tuteur, dialogues | `App` | éphémère |
 
-L’URL est la source de vérité de l’étape : un lien `/?etape=manipuler` ouvre directement la
-simulation, sans routeur ni rechargement. C’est ce qui rend une étape partageable sans ajouter
-de dépendance.
+L’URL est la source de vérité de l’étape : un lien `/?etape=interpreter` ou
+`/?etape=synthese` ouvre directement l’étape demandée, sans routeur ni rechargement. La
+progression enregistre les étapes terminées, les réponses choisies, les hypothèses modifiées et
+les abstentions du tuteur. Elle ne conserve pas la restitution libre ni les questions posées au
+tuteur. Les données locales malformées sont supprimées et la leçon continue sans interruption.
 
 ## Pipeline de contenu
 
@@ -110,7 +116,7 @@ branche n’est pas active. Ce point est traité dans
 
 ## Décisions structurantes
 
-- **Pas de routeur.** Deux étapes, un paramètre d’URL : ajouter React Router serait une
+- **Pas de routeur.** Quatre étapes, un paramètre d’URL : ajouter React Router serait une
   dépendance sans bénéfice mesurable.
 - **Tokens CSS sémantiques.** Les composants n’utilisent pas de couleurs en dur ; le thème
   sombre est une seconde valeur des mêmes tokens sur `:root[data-theme="dark"]`.

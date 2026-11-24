@@ -1,5 +1,5 @@
 import { formatNumber, formatPercent } from '../../shared/format'
-import { stepNumber } from '../../shared/steps'
+import { STEPS, stepNumber } from '../../shared/steps'
 import type { StepId } from '../../shared/steps'
 import { lessonMeta, steps } from '../../content/lesson'
 import type { StatContent } from '../../content/lesson'
@@ -40,7 +40,7 @@ export function LessonHeader({ step, result, isInitial, onReset }: LessonHeaderP
       <nav className="breadcrumb" aria-label={fr.lesson.breadcrumb}>
         <span>{lessonMeta.moduleIndex}. {lessonMeta.moduleTitle}</span>
         <span aria-hidden="true">/</span>
-        <span>{fr.lesson.stepOf(number, 2)}</span>
+          <span>{fr.lesson.stepOf(number, STEPS.length)}</span>
       </nav>
 
       <div className="lesson-title-row">
@@ -51,7 +51,7 @@ export function LessonHeader({ step, result, isInitial, onReset }: LessonHeaderP
         <div className="lesson-meta">
           <span className="meta-chip">{current.durationMinutes} min</span>
           <span className="meta-chip">{current.level}</span>
-          <span className="meta-chip">{fr.lesson.stepSlash(number, 2)}</span>
+          <span className="meta-chip">{fr.lesson.stepSlash(number, STEPS.length)}</span>
         </div>
       </div>
 

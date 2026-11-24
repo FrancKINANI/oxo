@@ -16,7 +16,17 @@ export type LessonManifest = {
     params: Array<{ id: string; min: number; max: number; default: number; isHypothesis: boolean }>
   }
   blocks: Record<LessonBlockId, { title: string; body: string }>
-  quiz: { id: string; prompt: string; choices: Array<{ id: string; text: string; isCorrect: boolean }> }
+  quiz: Array<{
+    id: string
+    prompt: string
+    choices: Array<{
+      id: string
+      text: string
+      isCorrect: boolean
+      misconception: string | null
+      feedback: string
+    }>
+  }>
   review: {
     author: string
     reviewer: string | null
@@ -66,14 +76,40 @@ export const lessonManifest: LessonManifest = {
       body: 'Explique pourquoi deux ménages peuvent ressentir des hausses différentes alors que l’IPC national est une moyenne pondérée.',
     },
   },
-  quiz: {
-    id: 'inflation-weighting-check',
-    prompt: 'Pourquoi une hausse de prix n’a-t-elle pas le même effet sur tous les paniers ?',
-    choices: [
-      { id: 'weights-matter', text: 'Parce que la part de chaque poste peut différer selon le panier.', isCorrect: true },
-      { id: 'all-same', text: 'Parce que tous les paniers augmentent toujours du même montant.', isCorrect: false },
-    ],
-  },
+  quiz: [
+    {
+      id: 'one-price-is-not-inflation',
+      prompt: 'Le prix des tomates augmente. Que peut-on conclure sur l’inflation ?',
+      choices: [
+        { id: 'one-price-correct', text: 'Il faut observer un ensemble de prix sur une période.', isCorrect: true, misconception: null, feedback: 'Exact : l’inflation porte sur l’évolution générale des prix, pas sur un seul produit.' },
+        { id: 'single-price', text: 'L’inflation générale a forcément augmenté.', isCorrect: false, misconception: 'hausse-un-prix-egale-inflation', feedback: 'Un seul prix peut augmenter pour des raisons propres à ce produit. Il ne suffit pas à mesurer l’évolution générale.' },
+      ],
+    },
+    {
+      id: 'ipc-is-not-my-basket',
+      prompt: 'Pourquoi votre panier peut-il évoluer autrement que l’IPC national ?',
+      choices: [
+        { id: 'basket-correct', text: 'Votre composition et vos quantités peuvent différer du panier de référence.', isCorrect: true, misconception: null, feedback: 'Exact : l’IPC est une moyenne pondérée; chaque ménage peut avoir d’autres dépenses.' },
+        { id: 'basket-equals-ipc', text: 'L’IPC reproduit exactement les achats de chaque ménage.', isCorrect: false, misconception: 'mon-panier-egale-ipc', feedback: 'L’IPC est une mesure nationale construite à partir d’un panier de référence. Il ne décrit pas chaque ménage.' },
+      ],
+    },
+    {
+      id: 'weights-change-impact',
+      prompt: 'Deux postes connaissent la même hausse. Pourquoi leur effet sur un panier peut-il différer ?',
+      choices: [
+        { id: 'weight-correct', text: 'Leur poids dans le panier peut être différent.', isCorrect: true, misconception: null, feedback: 'Exact : à variation égale, un poste plus lourd contribue davantage au résultat pondéré.' },
+        { id: 'weight-ignored', text: 'Le poids ne change jamais l’effet d’une hausse.', isCorrect: false, misconception: 'poids-sans-effet', feedback: 'Le poids compte : une variation identique a une contribution différente selon la part du poste.' },
+      ],
+    },
+    {
+      id: 'simulation-is-not-forecast',
+      prompt: 'Que signifie le résultat du simulateur OXO ?',
+      choices: [
+        { id: 'simulation-correct', text: 'C’est le résultat des hypothèses choisies dans un modèle simplifié.', isCorrect: true, misconception: null, feedback: 'Exact : le résultat dépend des hypothèses saisies; ce n’est ni une prévision ni l’IPC officiel.' },
+        { id: 'simulation-forecast', text: 'C’est une prévision officielle des prix à venir.', isCorrect: false, misconception: 'simulation-egale-prevision', feedback: 'Le simulateur applique des hypothèses pédagogiques. Il ne prédit pas les prix et ne remplace pas une publication du HCP.' },
+      ],
+    },
+  ],
   review: {
     author: 'OXO',
     reviewer: null,
@@ -125,8 +161,14 @@ export function validateLessonManifest(value: unknown): void {
     }
   }
   const quiz = manifest.quiz
-  if (!quiz?.id?.trim() || !quiz.prompt.trim() || !Array.isArray(quiz.choices) || quiz.choices.length < 2 || !quiz.choices.some((choice) => choice.isCorrect && choice.text.trim())) {
-    throw new Error('Manifeste de leçon invalide : quiz incomplet')
+  if (!Array.isArray(quiz) || !quiz.length) throw new Error('Manifeste de leçon invalide : quiz incomplet')
+  for (const item of quiz) {
+    if (!item.id?.trim() || !item.prompt.trim() || !Array.isArray(item.choices) || item.choices.length < 2 || item.choices.filter((choice) => choice.isCorrect).length !== 1) {
+      throw new Error(`Manifeste de leçon invalide : quiz incomplet (${item.id || 'sans identifiant'})`)
+    }
+    if (item.choices.some((choice) => !choice.id.trim() || !choice.text.trim() || !choice.feedback.trim() || (!choice.isCorrect && !choice.misconception))) {
+      throw new Error(`Manifeste de leçon invalide : feedback ou misconception manquant (${item.id})`)
+    }
   }
   const review = manifest.review
   if (!review?.author?.trim() || !review.nextReviewDue || !['draft', 'to_review', 'verified'].includes(review.status)) throw new Error('Manifeste de leçon invalide : revue éditoriale incomplète')
