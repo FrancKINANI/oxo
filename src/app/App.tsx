@@ -14,6 +14,7 @@ import { TutorDock } from '../components/layout/TutorDock'
 import { PriceStage } from '../features/prices/components/PriceStage'
 import { BasketStage } from '../features/simulation/components/BasketStage'
 import { useBasketSimulation } from '../features/simulation/model/useBasketSimulation'
+import { fr } from '../content/locales/fr'
 
 export function App() {
   const [theme, setTheme] = useState<Theme>(readTheme)
@@ -46,7 +47,7 @@ export function App() {
 
   return (
     <div className="app">
-      <a className="skip-link" href="#lesson">Aller au contenu</a>
+      <a className="skip-link" href="#lesson">{fr.app.skipToContent}</a>
 
       <Topbar
         step={step}

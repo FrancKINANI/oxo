@@ -1,5 +1,6 @@
 import { STEPS, stepNumber } from '../../shared/steps'
 import type { StepId } from '../../shared/steps'
+import { fr } from '../../content/locales/fr'
 
 type LessonStepperProps = {
   step: StepId
@@ -8,8 +9,8 @@ type LessonStepperProps = {
 
 export function LessonStepper({ step, onSelectStep }: LessonStepperProps) {
   return (
-    <nav className="lesson-stepper" aria-label="Étapes de la leçon">
-      <span className="stepper-caption">Dans cette leçon</span>
+    <nav className="lesson-stepper" aria-label={fr.lesson.stepperAria}>
+      <span className="stepper-caption">{fr.lesson.inThisLesson}</span>
       <ol>
         {STEPS.map((item, index) => (
           <li key={item.id} className={item.id === step ? 'current' : ''}>
@@ -24,7 +25,7 @@ export function LessonStepper({ step, onSelectStep }: LessonStepperProps) {
           </li>
         ))}
       </ol>
-      <span className="stepper-count">Étape {stepNumber(step)} sur {STEPS.length}</span>
+      <span className="stepper-count">{fr.lesson.stepOf(stepNumber(step), STEPS.length)}</span>
     </nav>
   )
 }

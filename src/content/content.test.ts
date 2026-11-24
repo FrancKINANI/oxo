@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { concepts } from './concepts'
+import { concepts, parseConceptMarkdown } from './concepts'
 import { dataPoints, dataSnapshots, isReferencePeriodConsistent, snapshotFor } from './dataSnapshots'
+import { conceptGraph, validateConceptGraph } from './conceptGraph'
+import { lessonManifest, validateLessonManifest } from './lessonManifest'
+import { defaultLocale, getLocale, locale } from './locales/fr'
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/
 
@@ -16,6 +19,55 @@ describe('concepts', () => {
       expect(concept.source).toMatch(/Haut-Commissariat au Plan|HCP/)
       expect(concept.reviewed.length).toBeGreaterThan(0)
     }
+  })
+
+  it('fait échouer une fiche incomplète avec le nom du champ manquant', () => {
+    expect(() => parseConceptMarkdown('test.md', '# Test'))
+      .toThrow(/Définition simple, Source, Date de revue/)
+    expect(() => parseConceptMarkdown('sans-titre.md', ''))
+      .toThrow(/titre, Définition simple, Source, Date de revue/)
+  })
+
+  it('expose les prérequis typés du graphe de concepts', () => {
+    expect(conceptGraph.inflation.prerequisites).toEqual([])
+    expect(conceptGraph.ipc.prerequisites).toEqual(['inflation'])
+    expect(() => validateConceptGraph()).not.toThrow()
+  })
+})
+
+describe('LessonManifest', () => {
+  it('contient les blocs, données, paramètres, quiz et revue nécessaires', () => {
+    expect(() => validateLessonManifest(lessonManifest)).not.toThrow()
+    expect(Object.keys(lessonManifest.blocks)).toEqual([
+      'observation', 'mechanism', 'formalization', 'limits', 'retrieval',
+    ])
+    expect(lessonManifest.review.status).toBe('to_review')
+    expect(lessonManifest.review.reviewedAt).toBeNull()
+  })
+
+  it('refuse un manifeste incomplet et une référence de donnée inconnue', () => {
+    expect(() => validateLessonManifest({ id: 'incomplet' })).toThrow(/champ\(s\) manquant\(s\)/)
+    const invalid = { ...lessonManifest, dataRefs: ['snapshot-inconnu'] }
+    expect(() => validateLessonManifest(invalid)).toThrow(/snapshot inconnu/)
+  })
+
+  it('refuse un bloc vide, un paramètre hors limites et une revue vérifiée sans approbation', () => {
+    const emptyBlock = { ...lessonManifest, blocks: { ...lessonManifest.blocks, limits: { title: 'Limites', body: ' ' } } }
+    expect(() => validateLessonManifest(emptyBlock)).toThrow(/bloc limits incomplet/)
+
+    const invalidParameter = { ...lessonManifest, simulation: { ...lessonManifest.simulation, params: [{ ...lessonManifest.simulation.params[0], default: 31 }] } }
+    expect(() => validateLessonManifest(invalidParameter)).toThrow(/bornes incompatibles/)
+
+    const unreviewedVerified = { ...lessonManifest, review: { ...lessonManifest.review, status: 'verified' as const } }
+    expect(() => validateLessonManifest(unreviewedVerified)).toThrow(/réviseur et une date de revue/)
+  })
+})
+
+describe('catalogue de locale', () => {
+  it('ne livre que le français et utilise fr comme repli', () => {
+    expect(defaultLocale).toBe('fr')
+    expect(Object.keys(locale)).toEqual(['fr'])
+    expect(getLocale('locale-inconnue')).toBe(locale.fr)
   })
 })
 

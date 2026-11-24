@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
+import { fr } from '../content/locales/fr'
 
 type Props = { children: ReactNode }
 type State = { failed: boolean }
@@ -17,7 +18,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('Erreur de rendu non gérée', error, info.componentStack)
+    console.error(fr.error.log, error, info.componentStack)
   }
 
   render() {
@@ -26,13 +27,10 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="app">
         <section className="fallback" role="alert">
-          <h1>Le contenu n’a pas pu s’afficher</h1>
-          <p>
-            Rechargez la page. Si le problème persiste, revenez plus tard : la leçon
-            reste disponible, aucune donnée n’a été perdue.
-          </p>
+          <h1>{fr.error.title}</h1>
+          <p>{fr.error.body}</p>
           <button className="primary-button" type="button" onClick={() => window.location.reload()}>
-            Recharger la page
+            {fr.error.reload}
           </button>
         </section>
       </div>

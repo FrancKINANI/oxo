@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import type { StepId } from '../../shared/steps'
+import { fr } from '../../content/locales/fr'
 
 type CourseNavProps = {
   step: StepId
@@ -8,10 +9,7 @@ type CourseNavProps = {
   onClose: () => void
 }
 
-const upcomingModules = [
-  { index: '02', title: 'Budget public', lessons: '2 activités' },
-  { index: '03', title: 'Monnaie et taux', lessons: '2 activités' },
-]
+const upcomingModules = fr.navigation.upcomingModules
 
 export function CourseNav({ step, open, onSelectStep, onClose }: CourseNavProps) {
   // Fermeture au clavier du tiroir mobile.
@@ -27,10 +25,10 @@ export function CourseNav({ step, open, onSelectStep, onClose }: CourseNavProps)
   return (
     <>
       {open && <div className="scrim" aria-hidden="true" onClick={onClose} />}
-      <aside className={`course-nav ${open ? 'open' : ''}`} aria-label="Parcours">
+      <aside className={`course-nav ${open ? 'open' : ''}`} aria-label={fr.navigation.aria}>
         <div className="nav-heading">
-          <span>Parcours</span>
-          <button className="nav-close" type="button" aria-label="Fermer le parcours" onClick={onClose}>
+          <span>{fr.navigation.title}</span>
+          <button className="nav-close" type="button" aria-label={fr.app.closeCourse} onClick={onClose}>
             <span aria-hidden="true">✕</span>
           </button>
         </div>
@@ -38,9 +36,9 @@ export function CourseNav({ step, open, onSelectStep, onClose }: CourseNavProps)
         <nav className="nav-tree">
           <section className="nav-group">
             <div className="nav-group-head">
-              <span className="nav-group-icon">01</span>
-              <strong>Prix et inflation</strong>
-              <span className="nav-count">1/2</span>
+              <span className="nav-group-icon">{fr.course.moduleIndex}</span>
+              <strong>{fr.navigation.module}</strong>
+              <span className="nav-count">{fr.course.currentCount}</span>
             </div>
             <ul className="nav-list">
               <li>
@@ -50,7 +48,7 @@ export function CourseNav({ step, open, onSelectStep, onClose }: CourseNavProps)
                   aria-current={step === 'observer' ? 'step' : undefined}
                   onClick={() => onSelectStep('observer')}
                 >
-                  Pourquoi mon panier augmente
+                  {fr.navigation.steps[0]}
                 </button>
               </li>
               <li>
@@ -60,7 +58,7 @@ export function CourseNav({ step, open, onSelectStep, onClose }: CourseNavProps)
                   aria-current={step === 'manipuler' ? 'step' : undefined}
                   onClick={() => onSelectStep('manipuler')}
                 >
-                  Faites varier votre panier
+                  {fr.navigation.steps[1]}
                 </button>
               </li>
             </ul>
@@ -71,17 +69,17 @@ export function CourseNav({ step, open, onSelectStep, onClose }: CourseNavProps)
               <div className="nav-group-head">
                 <span className="nav-group-icon">{module.index}</span>
                 <strong>{module.title}</strong>
-                <span className="nav-count">À venir</span>
+                <span className="nav-count">{fr.navigation.upcoming}</span>
               </div>
-              <p className="nav-soon">{module.lessons} — bientôt disponible</p>
+              <p className="nav-soon">{module.lessons} — {fr.navigation.soon}</p>
             </section>
           ))}
         </nav>
 
         <div className="progress-card">
           <div className="progress-card-head">
-            <span>Progression</span>
-            <strong>1 / 4</strong>
+            <span>{fr.navigation.progress}</span>
+            <strong>{fr.course.completedCount}</strong>
           </div>
           <div
             className="progress-bar"
@@ -89,11 +87,11 @@ export function CourseNav({ step, open, onSelectStep, onClose }: CourseNavProps)
             aria-valuemin={0}
             aria-valuemax={4}
             aria-valuenow={1}
-            aria-label="Modules terminés"
+            aria-label={fr.navigation.completedModules}
           >
-            <span style={{ width: '25%' }} />
+            <span style={{ width: fr.course.progressPercent }} />
           </div>
-          <p>Module en cours : prix et inflation.</p>
+          <p>{fr.navigation.moduleInProgress}</p>
         </div>
       </aside>
     </>

@@ -13,16 +13,16 @@
 - [x] A007 Marquer les contenus éditoriaux modifiés `to_review` avec date de revue.
 - [x] A008 Tester la complétude de provenance, la cohérence période/publication et l’affichage du preset.
 - [x] A009 Mettre à jour `docs/architecture.md` et `docs/production.md`; mesurer la taille gzip et vérifier les contraintes CSP/offline.
-- [ ] A010 Exécuter verify/build, relire le diff, pousser la branche et ouvrir la PR Lot A.
+- [x] A010 Exécuter verify/build, relire le diff, pousser la branche et ouvrir la PR Lot A. CI verte sur la PR #5.
 
 ## Lot B — Manifestes, i18n et graphe
 
-- [ ] B001 Définir et valider au build le `LessonManifest` complet (objectifs, prérequis, références, modèle/paramètres, blocs, quiz et revue éditoriale).
-- [ ] B002 Migrer la leçon existante et les concepts vers le manifeste sans changement visible non demandé.
-- [ ] B003 Généraliser le pipeline de validation pour faire échouer les contenus incomplets avec un champ explicite.
-- [ ] B004 Placer les chaînes UI dans le catalogue `fr` et retirer les chaînes d’interface des composants.
-- [ ] B005 Définir les types/nœuds/arêtes du graphe de concepts sans moteur adaptatif.
-- [ ] B006 Réécrire la leçon inflation selon les premiers principes, statut `to_review`, et mettre à jour les tests/docs.
+- [x] B001 Définir et valider au build le `LessonManifest` complet (objectifs, prérequis, références, modèle/paramètres, blocs, quiz et revue éditoriale).
+- [x] B002 Migrer la leçon existante et les concepts vers le manifeste sans changement visible non demandé.
+- [x] B003 Généraliser le pipeline de validation pour faire échouer les contenus incomplets avec un champ explicite.
+- [x] B004 Placer les chaînes UI dans le catalogue `fr` et retirer les chaînes d’interface des composants.
+- [x] B005 Définir les types/nœuds/arêtes du graphe de concepts sans moteur adaptatif.
+- [x] B006 Structurer la leçon inflation en observation, mécanisme, formalisation, limites et récupération; statut `to_review`; mettre à jour les tests/docs.
 - [ ] B007 Vérifier, construire, contrôler le budget gzip et livrer la PR Lot B après CI verte du lot A.
 
 ## Lot C — Interpréter et synthèse

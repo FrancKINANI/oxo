@@ -20,7 +20,10 @@ et l’ouverture des dialogues, puis compose les quatre régions visibles — sc
 panneau d’étape, tuteur flottant, dialogues glossaire et sources. Le contenu et le calcul
 viennent de modules purs :
 
-- `src/content/lesson.ts` : textes, références par identifiant stable et métadonnées éditoriales ;
+- `src/content/lesson.ts` : projection typée de la leçon vers les deux étapes visibles ;
+- `src/content/lessonManifest.ts` : manifeste, blocs pédagogiques et validation ;
+- `src/content/conceptGraph.ts` : nœuds et prérequis typés, sans moteur adaptatif ;
+- `src/content/locales/fr.ts` : chaînes d’interface françaises et locale de repli ;
 - `src/content/dataSnapshots.ts` : snapshots HCP figés au build, séries, périodes, unités et provenance ;
 - `src/features/simulation/model/` : calcul du panier et hook d’état.
 
@@ -36,7 +39,7 @@ Le tuteur est local : ses réponses sont des règles déterministes dans
 | Routage d’étape | Lecture/écriture de `?etape=` | `src/app/route.ts` |
 | Primitives | Formatage, étapes, thème | `src/shared/format.ts`, `src/shared/steps.ts`, `src/shared/theme.ts` |
 | Thème | `data-theme` + `localStorage` | `src/shared/theme.ts`, `public/theme-init.js` |
-| Contenu | Leçon typée et snapshots HCP | `src/content/lesson.ts`, `src/content/dataSnapshots.ts` |
+| Contenu | Manifeste, projection, locales et snapshots HCP | `src/content/lessonManifest.ts`, `src/content/lesson.ts`, `src/content/locales/fr.ts`, `src/content/dataSnapshots.ts` |
 | Glossaire | Markdown compilé et validé | `src/content/concepts.ts`, `content/morocco/concepts/*.md` |
 | Scène 1 | Panier personnel face à l’IPC | `src/features/prices/components/PriceStage.tsx` |
 | Scène 2 | Simulation à hypothèses visibles | `src/features/simulation/components/BasketStage.tsx` |
@@ -67,16 +70,19 @@ de dépendance.
 Diagramme interactif : [content-pipeline.html](diagrams/content-pipeline.html) · source :
 [content-pipeline.json](diagrams/src/content-pipeline.json).
 
-Les fiches du glossaire restent du Markdown lisible dans `content/morocco/concepts/`. Au build,
-`import.meta.glob(..., { query: '?raw', eager: true })` les incorpore au bundle ; `parse()`
-extrait le titre et les champs `**Définition simple**`, `**Source**` et `**Date de revue**`.
-Un champ manquant lève une erreur : le build échoue, puis la CI. Aucune fiche incomplète ne peut
-donc atteindre la production.
+Les fiches du glossaire restent du Markdown lisible dans `content/morocco/concepts/`. La commande
+`npm run build` commence par `scripts/validate-content.mjs`, qui valide les champs requis des
+fiches, le manifeste, ses blocs, paramètres, quiz, snapshots et son statut éditorial. Le build
+échoue en nommant le contenu incomplet avant de produire le bundle. Vite incorpore ensuite les
+fiches via `import.meta.glob(..., { query: '?raw', eager: true })`.
 
-Les textes d’interface liés à la leçon vivent dans `lesson.ts`. Les chiffres affichés sont liés
-à des identifiants de snapshots dans `dataSnapshots.ts`; chaque point conserve sa période de
-référence et de comparaison, unité, géographie et source. Le contrôle éditorial du contenu
-touché est déclaré `to_review` jusqu’à validation humaine.
+Le manifeste `lessonManifest.ts` est la source des sections de leçon; `lesson.ts` projette les
+blocs visibles vers les étapes actuelles. Les chaînes d’interface vivent dans le catalogue de
+locale, séparé du contenu éducatif; `fr` est la seule locale livrée et sert de repli. Les
+identifiants et prérequis de concepts sont typés dans `conceptGraph.ts`, sans calcul d’adaptation.
+Les chiffres sont liés à des identifiants de snapshots dans `dataSnapshots.ts`; chaque point
+conserve période de référence et de comparaison, unité, géographie et source. Les contenus
+éditoriaux nouveaux restent `to_review` jusqu’à validation humaine.
 
 Le premier snapshot couvre l’IPC marocain d’octobre 2026, publié par le HCP le 20 novembre
 2026. Il comprend l’IPC national (+1,9 % sur un an), les produits alimentaires (+0,3 % sur un

@@ -89,7 +89,7 @@ contournée en désactivant le contrôle.
 ## Intégration continue
 
 `.github/workflows/ci.yml` s’exécute sur chaque pull request et sur chaque push vers `main` :
-`npm ci`, audit des dépendances, types, lint, tests, build, puis dépôt de `dist` en artefact
+`npm ci`, audit des dépendances, types, lint, tests, validation du contenu et build, puis dépôt de `dist` en artefact
 sept jours. Une exécution en cours est annulée par la suivante sur la même référence.
 
 Le job tourne avec `permissions: contents: read` et `persist-credentials: false` : le jeton
@@ -197,7 +197,8 @@ précédent, puis corriger sur une branche. Ne pas réécrire `main`.
 
 **Corriger un texte.** Modifier `src/content/lesson.ts` ou une fiche
 `content/morocco/concepts/*.md`, mettre à jour `Date de revue`, lancer `npm run verify` et
-`npm run build`, puis déployer. Le test de contenu refuse une fiche incomplète.
+`npm run build`, puis déployer. Le build valide les fiches Markdown, le manifeste typé, le graphe
+de concepts, les références de snapshots et les métadonnées de revue éditoriale avant compilation.
 
 **Mettre à jour une dépendance.** Laisser Dependabot ouvrir la PR, lire le diff, vérifier que
 la CI passe. Pour React ou Vite, contrôler aussi le poids du bundle (`npm run build`).
@@ -218,6 +219,6 @@ local avec `npm run preview`.
 
 ## Budget de performance actuel
 
-Mesuré le 24 novembre 2026 sur le build de cette branche : 39 modules, JavaScript 78,13 kB
+Mesuré le 24 novembre 2026 sur le build de la branche Lot B : 42 modules, JavaScript 80,91 kB
 gzip et CSS 5,78 kB gzip. La baseline du MVP était de 76,9 kB JavaScript et 5,6 kB CSS gzip;
-la hausse JavaScript est de 1,6 %, sous le seuil de 10 %.
+la hausse JavaScript est de 5,2 %, sous le seuil de 10 %.

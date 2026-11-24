@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { TutorPanel } from '../../features/tutor/components/TutorPanel'
+import { fr } from '../../content/locales/fr'
 
 type TutorDockProps = {
   open: boolean
@@ -26,13 +27,13 @@ export function TutorDock({ open, onOpen, onClose }: TutorDockProps) {
         aria-controls="tutor-dock"
         onClick={open ? onClose : onOpen}
       >
-        <span aria-hidden="true">✦</span> Tuteur
+        <span aria-hidden="true">✦</span> {fr.tutor.label}
       </button>
       <div
         className={`tutor-dock ${open ? 'open' : ''}`}
         id="tutor-dock"
         role="dialog"
-        aria-label="Tuteur IA"
+        aria-label={fr.tutor.aria}
         inert={!open}
       >
         <TutorPanel onClose={onClose} />

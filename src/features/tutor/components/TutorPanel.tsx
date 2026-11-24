@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { tutorCopy } from '../../../content/lesson'
 import { tutorAnswer } from '../model/tutorAnswer'
+import { fr } from '../../../content/locales/fr'
 
 type ChatMessage = {
   role: 'assistant' | 'user'
@@ -57,13 +58,13 @@ export function TutorPanel({ onClose }: TutorPanelProps) {
       <div className="tutor-heading">
         <div>
           <span className="online-dot" aria-hidden="true" />
-          <strong>Demander au tuteur</strong>
+          <strong>{fr.tutor.heading}</strong>
         </div>
         <div className="tutor-heading-actions">
           <button
             className="icon-button small"
             type="button"
-            aria-label="Effacer la conversation"
+            aria-label={fr.tutor.clear}
             onClick={() => {
               setMessages([initialMessage])
               inputRef.current?.focus()
@@ -74,7 +75,7 @@ export function TutorPanel({ onClose }: TutorPanelProps) {
           <button
             className="icon-button small"
             type="button"
-            aria-label="Fermer le tuteur"
+            aria-label={fr.tutor.close}
             onClick={onClose}
           >
             <span aria-hidden="true">✕</span>
@@ -82,10 +83,10 @@ export function TutorPanel({ onClose }: TutorPanelProps) {
         </div>
       </div>
 
-      <div className="chat-messages" ref={listRef} role="log" aria-live="polite" aria-label="Conversation">
+      <div className="chat-messages" ref={listRef} role="log" aria-live="polite" aria-label={fr.tutor.conversation}>
         {messages.map((message, index) => (
           <div className={message.role === 'user' ? 'user-message' : 'assistant-message'} key={index}>
-            <span className="sr-only">{message.role === 'user' ? 'Vous : ' : 'Tuteur : '}</span>
+            <span className="sr-only">{message.role === 'user' ? fr.tutor.userPrefix : fr.tutor.assistantPrefix}</span>
             {message.text}
           </div>
         ))}
@@ -97,7 +98,7 @@ export function TutorPanel({ onClose }: TutorPanelProps) {
       </div>
 
       <form className="chat-form" onSubmit={submitQuestion}>
-        <label className="sr-only" htmlFor="chat-input">Votre question</label>
+        <label className="sr-only" htmlFor="chat-input">{fr.tutor.question}</label>
         <textarea
           id="chat-input"
           ref={inputRef}
@@ -105,14 +106,14 @@ export function TutorPanel({ onClose }: TutorPanelProps) {
           value={input}
           onChange={(event) => setInput(event.target.value)}
           onKeyDown={handleInputKeyDown}
-          placeholder="Votre question…"
+          placeholder={fr.tutor.placeholder}
           maxLength={500}
         />
-        <button type="submit" aria-label="Envoyer" disabled={!canSend}>↑</button>
+        <button type="submit" aria-label={fr.tutor.send} disabled={!canSend}>↑</button>
       </form>
 
       <p className="privacy-note">
-        {tutorCopy.scope} Les questions ne sont pas conservées après cette session.
+        {tutorCopy.scope} {fr.tutor.privacySuffix}
       </p>
     </div>
   )

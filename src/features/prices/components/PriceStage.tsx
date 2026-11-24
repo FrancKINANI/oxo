@@ -1,6 +1,7 @@
 import { dataPoints, snapshotFor } from '../../../content/dataSnapshots'
-import { steps, ipcExample, panierExample, observedDataPointIds } from '../../../content/lesson'
+import { steps, ipcExample, observedDataPointIds } from '../../../content/lesson'
 import { formatDate } from '../../../shared/format'
+import { fr } from '../../../content/locales/fr'
 import { BASE_BASKET_DH } from '../../simulation/model/calculateBasket'
 
 const comparisonLabels = {
@@ -31,7 +32,7 @@ export function PriceStage() {
 
       <div className="compare-grid">
         <article className="compare-card">
-          <span className="stat-label">{panierExample.label}</span>
+          <span className="stat-label">{fr.price.basketLabel}</span>
           <div className="basket-illustration" aria-hidden="true">
             <svg viewBox="0 0 48 48" focusable="false">
               <path d="M7 17h34l-4.5 21H11.5L7 17Z" />
@@ -40,22 +41,22 @@ export function PriceStage() {
             </svg>
           </div>
           <strong className="compare-value">{BASE_BASKET_DH} DH</strong>
-          <p>{panierExample.description} Panier fictif simplifié, base mensuelle.</p>
-          <span className="tag">{panierExample.tag}</span>
+          <p>{fr.price.fixedExample} {fr.price.fictionalBasket}</p>
+          <span className="tag">{fr.price.individualCase}</span>
         </article>
 
         <article className="compare-card ipc">
-          <span className="stat-label">{ipcExample.label}</span>
+          <span className="stat-label">{fr.price.ipcLabel}</span>
           <div className="ipc-illustration" aria-hidden="true">
             <span /><span /><span />
           </div>
           <strong className="compare-value">{ipcExample.value}</strong>
           <p>{ipcExample.description}</p>
-          <span className="tag tag-blue">{ipcExample.tag}</span>
+          <span className="tag tag-blue">{fr.price.officialMeasure}</span>
         </article>
       </div>
 
-      <div className="observed-data" aria-label="Données HCP observées">
+      <div className="observed-data" aria-label={fr.price.observedData}>
         {observedDataPointIds.map((id) => {
           const point = dataPoints[id]
           const source = snapshotFor(point)
@@ -67,7 +68,7 @@ export function PriceStage() {
               <small>
                 {source.publisher} · publié le {formatDate(source.publicationDate)} · vérifié le {formatDate(source.retrievedAt)} · vérifiée
               </small>
-              <a href={source.url} target="_blank" rel="noopener noreferrer">Source HCP</a>
+              <a href={source.url} target="_blank" rel="noopener noreferrer">{fr.price.source}</a>
             </article>
           )
         })}

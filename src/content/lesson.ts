@@ -1,6 +1,7 @@
 import { formatDate } from '../shared/format'
 import type { StepId } from '../shared/steps'
 import { dataPoints, dataSnapshots } from './dataSnapshots'
+import { lessonManifest } from './lessonManifest'
 
 export type SourceRef = {
   snapshotId: keyof typeof dataSnapshots
@@ -69,8 +70,8 @@ export const steps: Record<StepId, StepContent> = {
       note: 'Une hausse visible sur votre panier ne suffit pas à conclure à une hausse générale des prix.',
     },
     narration: {
-      title: 'Deux mesures, deux usages',
-      body: 'Votre panier décrit ce que vous achetez, aux prix que vous payez. L’IPC décrit l’évolution moyenne des prix pour une sélection représentative de ménages, avec des poids publiés par le HCP. Une hausse de votre panier ne prouve donc pas, à elle seule, une hausse générale des prix.',
+      title: lessonManifest.blocks.observation.title,
+      body: lessonManifest.blocks.observation.body,
       keyIdea: 'Votre panier est un cas particulier. L’IPC est une moyenne nationale pondérée.',
       learn: [
         'Distinguer votre panier de l’IPC',
@@ -97,8 +98,8 @@ export const steps: Record<StepId, StepContent> = {
       note: simulationDisclaimer,
     },
     narration: {
-      title: 'Ce que fait chaque curseur',
-      body: 'La variation s’applique à la part du poste dans le panier. Alimentation pèse 40 %, transport 25 %, logement 35 % : la même hausse ne produit donc pas le même effet selon le poste modifié.',
+      title: lessonManifest.blocks.mechanism.title,
+      body: lessonManifest.blocks.mechanism.body,
       keyIdea: 'Un poste lourd pèse plus qu’un poste léger, même à variation identique.',
       learn: [
         'Calculer une variation pondérée',
