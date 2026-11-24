@@ -8,6 +8,7 @@ import { App } from './App'
 beforeEach(() => {
   Element.prototype.scrollIntoView = vi.fn()
   document.documentElement.dataset.theme = 'light'
+  window.history.replaceState(null, '', '/')
 })
 
 afterEach(cleanup)
@@ -61,6 +62,47 @@ describe('App', () => {
     await user.click(reset)
     expect(total()).toHaveTextContent('252 DH')
     expect(reset).toBeDisabled()
+  })
+
+  it('reflète l’étape dans l’URL pour un partage direct', async () => {
+    render(<App />)
+    expect(window.location.search).toBe('')
+
+    await goToSimulation()
+    expect(window.location.search).toBe('?etape=manipuler')
+  })
+
+  it('ouvre directement l’étape demandée par l’URL', () => {
+    window.history.replaceState(null, '', '/?etape=manipuler')
+    render(<App />)
+
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Faites varier votre panier')
+  })
+
+  it('ouvre le glossaire et le referme avec Échap', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Glossaire' }))
+
+    const dialog = screen.getByRole('dialog', { name: 'Glossaire' })
+    expect(within(dialog).getByText('Inflation')).toBeInTheDocument()
+    expect(within(dialog).getByText(/Indice des prix à la consommation/i)).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog', { name: 'Glossaire' })).not.toBeInTheDocument()
+  })
+
+  it('affiche les sources et leur date de vérification', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Sources' }))
+
+    const dialog = screen.getByRole('dialog', { name: /sources/i })
+    expect(within(dialog).getByText('Haut-Commissariat au Plan')).toBeInTheDocument()
+    expect(within(dialog).getAllByText('20 nov. 2026')).toHaveLength(2)
+    expect(within(dialog).getByText('novembre 2026')).toBeInTheDocument()
   })
 
   it('répond aux questions du tuteur dans le dock', async () => {

@@ -1,5 +1,16 @@
 const numberFormat = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 })
 
+const dateFormat = new Intl.DateTimeFormat('fr-FR', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+})
+
+/** Formate une date ISO (YYYY-MM-DD) sans décalage de fuseau. */
+export function formatDate(iso: string) {
+  return dateFormat.format(new Date(`${iso}T00:00:00`))
+}
+
 export function formatNumber(value: number) {
   return numberFormat.format(value)
 }

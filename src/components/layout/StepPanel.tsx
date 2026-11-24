@@ -1,5 +1,7 @@
+import { formatDate } from '../../app/format'
 import { stepNumber } from '../../app/steps'
 import type { StepId } from '../../app/steps'
+import { lessonMeta, primarySource, steps } from '../../content/lesson'
 
 type StepPanelProps = {
   step: StepId
@@ -8,54 +10,28 @@ type StepPanelProps = {
   onOpenTutor: () => void
 }
 
-const content: Record<StepId, {
-  pill: string
-  title: string
-  body: string
-  keyIdea: string
-  learn: string[]
-}> = {
-  observer: {
-    pill: 'Observer',
-    title: 'Deux mesures, deux usages',
-    body: 'Votre panier décrit ce que vous achetez, aux prix que vous payez. L’IPC décrit l’évolution moyenne des prix pour une sélection représentative de ménages, avec des poids publiés par le HCP. Une hausse de votre panier ne prouve donc pas, à elle seule, une hausse générale des prix.',
-    keyIdea: 'Votre panier est un cas particulier. L’IPC est une moyenne nationale pondérée.',
-    learn: [
-      'Distinguer votre panier de l’IPC',
-      'Reconnaître une donnée observée d’une hypothèse',
-      'Retrouver la source officielle',
-    ],
-  },
-  manipuler: {
-    pill: 'Manipuler',
-    title: 'Ce que fait chaque curseur',
-    body: 'La variation s’applique à la part du poste dans le panier. Alimentation pèse 40 %, transport 25 %, logement 35 % : la même hausse ne produit donc pas le même effet selon le poste modifié.',
-    keyIdea: 'Un poste lourd pèse plus qu’un poste léger, même à variation identique.',
-    learn: [
-      'Calculer une variation pondérée',
-      'Voir l’effet d’un poids dans le panier',
-      'Séparer hypothèse et donnée officielle',
-    ],
-  },
+const pills: Record<StepId, string> = {
+  observer: 'Observer',
+  manipuler: 'Manipuler',
 }
 
 export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPanelProps) {
-  const current = content[step]
+  const current = steps[step]
   const number = stepNumber(step)
 
   return (
     <aside className="step-panel" aria-labelledby="step-panel-title">
       <div className="step-panel-head">
         <span className="step-panel-kicker">Étape {number} / 2</span>
-        <span className="pill">{current.pill}</span>
+        <span className="pill">{pills[step]}</span>
       </div>
 
-      <h2 id="step-panel-title">{current.title}</h2>
-      <p className="step-panel-body">{current.body}</p>
+      <h2 id="step-panel-title">{current.narration.title}</h2>
+      <p className="step-panel-body">{current.narration.body}</p>
 
       <div className="key-idea">
         <span className="key-idea-label">✦ Idée clé</span>
-        <p>{current.keyIdea}</p>
+        <p>{current.narration.keyIdea}</p>
       </div>
 
       <div className="step-actions">
@@ -85,7 +61,7 @@ export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPa
       <section className="youll-learn">
         <h3>Vous allez apprendre</h3>
         <ul>
-          {current.learn.map((item) => (
+          {current.narration.learn.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
@@ -94,14 +70,14 @@ export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPa
       <div className="panel-source">
         <span className="stat-label">Source principale</span>
         <p>
-          <strong>Haut-Commissariat au Plan</strong> — Indices des prix à la consommation
+          <strong>{primarySource.publisher}</strong> — {primarySource.title}
         </p>
-        <small>Référence : novembre 2026 · à vérifier avant publication</small>
-        <a
-          href="https://www.hcp.ma/Indices-des-prix-a-la-consommation-IPC_r348.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <small>
+          Référence : {primarySource.referencePeriod} · vérifiée le{' '}
+          {formatDate(primarySource.checkedAt)}
+        </small>
+        <small>Révision éditoriale : {formatDate(lessonMeta.revision)}</small>
+        <a href={primarySource.url} target="_blank" rel="noopener noreferrer">
           Consulter la source
         </a>
       </div>

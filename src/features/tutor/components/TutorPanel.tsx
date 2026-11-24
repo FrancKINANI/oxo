@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
+import { tutorCopy } from '../../../content/lesson'
 import { tutorAnswer } from '../model/tutorAnswer'
 
 type ChatMessage = {
@@ -7,15 +8,7 @@ type ChatMessage = {
   text: string
 }
 
-const initialMessage: ChatMessage = {
-  role: 'assistant',
-  text: 'Bonjour. Posez une question sur les prix, l’inflation ou la simulation.',
-}
-
-const suggestions = [
-  'Quelle est la différence entre mon panier et l’IPC ?',
-  'Que signifie une hypothèse ?',
-]
+const initialMessage: ChatMessage = { role: 'assistant', text: tutorCopy.initialMessage }
 
 type TutorPanelProps = {
   onClose: () => void
@@ -96,7 +89,7 @@ export function TutorPanel({ onClose }: TutorPanelProps) {
             {message.text}
           </div>
         ))}
-        {messages.length === 1 && suggestions.map((question) => (
+        {messages.length === 1 && tutorCopy.suggestions.map((question) => (
           <button className="suggestion" type="button" key={question} onClick={() => ask(question)}>
             {question}
           </button>
@@ -119,8 +112,7 @@ export function TutorPanel({ onClose }: TutorPanelProps) {
       </form>
 
       <p className="privacy-note">
-        Entrée pour envoyer · Maj+Entrée pour un retour à la ligne. Les questions
-        ne sont pas conservées après cette session.
+        {tutorCopy.scope} Les questions ne sont pas conservées après cette session.
       </p>
     </div>
   )

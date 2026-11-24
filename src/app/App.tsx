@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { readStepFromUrl, writeStepToUrl } from '../app/route'
 import { applyTheme, readTheme } from '../app/theme'
 import type { Theme } from '../app/theme'
 import type { StepId } from '../app/steps'
 import { Topbar } from '../components/layout/Topbar'
 import { CourseNav } from '../components/layout/CourseNav'
+import { InfoDialog } from '../components/layout/InfoDialog'
+import type { InfoKind } from '../components/layout/InfoDialog'
 import { LessonHeader } from '../components/layout/LessonHeader'
 import { LessonStepper } from '../components/layout/LessonStepper'
 import { StepPanel } from '../components/layout/StepPanel'
@@ -14,10 +17,15 @@ import { useBasketSimulation } from '../features/simulation/model/useBasketSimul
 
 export function App() {
   const [theme, setTheme] = useState<Theme>(readTheme)
-  const [step, setStep] = useState<StepId>('observer')
+  const [step, setStep] = useState<StepId>(() => readStepFromUrl(window.location.search) ?? 'observer')
   const [navOpen, setNavOpen] = useState(false)
   const [tutorOpen, setTutorOpen] = useState(false)
+  const [infoOpen, setInfoOpen] = useState<InfoKind | null>(null)
   const basket = useBasketSimulation()
+
+  useEffect(() => {
+    writeStepToUrl(step)
+  }, [step])
 
   function toggleTheme() {
     const next: Theme = theme === 'dark' ? 'light' : 'dark'
@@ -47,6 +55,7 @@ export function App() {
         onSelectStep={selectStep}
         onOpenNav={() => setNavOpen(true)}
         onThemeToggle={toggleTheme}
+        onOpenInfo={setInfoOpen}
       />
 
       <div className="shell">
@@ -92,6 +101,8 @@ export function App() {
         onOpen={() => setTutorOpen(true)}
         onClose={() => setTutorOpen(false)}
       />
+
+      {infoOpen && <InfoDialog kind={infoOpen} onClose={() => setInfoOpen(null)} />}
     </div>
   )
 }

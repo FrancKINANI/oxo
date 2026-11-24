@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { formatDh, formatNumber, formatPercent } from '../../../app/format'
+import { steps } from '../../../content/lesson'
 import type { BasketField } from '../model/useBasketSimulation'
 import type { BasketBreakdownItem, BasketSimulationInput } from '../model/calculateBasket'
 
@@ -55,13 +56,14 @@ type BasketStageProps = {
 }
 
 export function BasketStage({ variant, breakdown, totalDh, onChange }: BasketStageProps) {
+  const stage = steps.manipuler.stage
   const maxDh = Math.max(...breakdown.map((item) => Math.max(item.baseDh, item.currentDh)), 1)
 
   return (
     <section className="stage" aria-labelledby="stage-title">
       <div className="stage-top">
-        <span className="stage-label" id="stage-title">Votre panier simulé</span>
-        <span className="scenario-badge">Hypothèses modifiables</span>
+        <span className="stage-label" id="stage-title">{stage.title}</span>
+        <span className="scenario-badge">{stage.badge}</span>
       </div>
 
       <div className="stage-bars">
@@ -121,10 +123,7 @@ export function BasketStage({ variant, breakdown, totalDh, onChange }: BasketSta
         />
       </div>
 
-      <p className="stage-note">
-        Relation simplifiée : les variations sont des hypothèses, pas les valeurs
-        publiées par le HCP. Ce résultat n’est ni une prévision, ni l’IPC officiel.
-      </p>
+      <p className="stage-note">{stage.note}</p>
     </section>
   )
 }

@@ -1,5 +1,6 @@
 import type { StepId } from '../../app/steps'
 import type { Theme } from '../../app/theme'
+import type { InfoKind } from './InfoDialog'
 
 type TopbarProps = {
   step: StepId
@@ -8,6 +9,7 @@ type TopbarProps = {
   onSelectStep: (step: StepId) => void
   onOpenNav: () => void
   onThemeToggle: () => void
+  onOpenInfo: (kind: InfoKind) => void
 }
 
 export function Topbar({
@@ -17,6 +19,7 @@ export function Topbar({
   onSelectStep,
   onOpenNav,
   onThemeToggle,
+  onOpenInfo,
 }: TopbarProps) {
   const dark = theme === 'dark'
 
@@ -60,10 +63,10 @@ export function Topbar({
         >
           Simuler
         </button>
-        <button className="mode-tab" type="button" disabled title="Bientôt disponible">
+        <button className="mode-tab" type="button" onClick={() => onOpenInfo('sources')}>
           Sources
         </button>
-        <button className="mode-tab" type="button" disabled title="Bientôt disponible">
+        <button className="mode-tab" type="button" onClick={() => onOpenInfo('glossaire')}>
           Glossaire
         </button>
       </nav>
