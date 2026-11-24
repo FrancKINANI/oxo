@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { formatDh, formatNumber, formatPercent } from '../../../app/format'
+import { formatDh, formatNumber, formatPercent } from '../../../shared/format'
 import { steps } from '../../../content/lesson'
 import type { BasketField } from '../model/useBasketSimulation'
 import type { BasketBreakdownItem, BasketSimulationInput } from '../model/calculateBasket'

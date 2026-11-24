@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import type { StepId } from '../../app/steps'
+import type { StepId } from '../../shared/steps'
 
 type CourseNavProps = {
   step: StepId

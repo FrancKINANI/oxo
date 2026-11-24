@@ -33,7 +33,8 @@ Le tuteur est local : ses réponses sont des règles déterministes dans
 | Entrée | Montage React, filet de sécurité | `src/main.tsx`, `src/app/ErrorBoundary.tsx` |
 | Coquille | Étape, thème, navigation, dialogues | `src/app/App.tsx` |
 | Routage d’étape | Lecture/écriture de `?etape=` | `src/app/route.ts` |
-| Thème | `data-theme` + `localStorage` | `src/app/theme.ts`, `public/theme-init.js` |
+| Primitives | Formatage, étapes, thème | `src/shared/format.ts`, `src/shared/steps.ts`, `src/shared/theme.ts` |
+| Thème | `data-theme` + `localStorage` | `src/shared/theme.ts`, `public/theme-init.js` |
 | Contenu | Leçon typée | `src/content/lesson.ts` |
 | Glossaire | Markdown compilé et validé | `src/content/concepts.ts`, `content/morocco/concepts/*.md` |
 | Scène 1 | Panier personnel face à l’IPC | `src/features/prices/components/PriceStage.tsx` |

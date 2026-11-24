@@ -1,5 +1,5 @@
-import type { StepId } from '../../app/steps'
-import type { Theme } from '../../app/theme'
+import type { StepId } from '../../shared/steps'
+import type { Theme } from '../../shared/theme'
 import type { InfoKind } from './InfoDialog'
 
 type TopbarProps = {

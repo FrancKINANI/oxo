@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef } from 'react'
-import { formatDate } from '../../app/format'
+import { formatDate } from '../../shared/format'
 import { concepts } from '../../content/concepts'
 import { lessonMeta, primarySource } from '../../content/lesson'
 

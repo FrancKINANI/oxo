@@ -1,4 +1,4 @@
-import type { StepId } from './steps'
+import type { StepId } from '../shared/steps'
 
 const PARAM = 'etape'
 

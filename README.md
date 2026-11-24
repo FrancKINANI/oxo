@@ -34,6 +34,7 @@ src/
   app/            coquille, étape, thème, routage d’URL, ErrorBoundary
   components/     barre supérieure, navigation, panneau, dialogues
   content/        leçon typée et glossaire compilé depuis le Markdown
+  shared/         formatage, étapes, thème (primitives sans dépendance UI)
   features/
     prices/       scène « panier face à l’IPC »
     simulation/   modèle du panier, hook d’état, scène « manipuler »

@@ -1,6 +1,6 @@
-import { formatDate } from '../../app/format'
-import { stepNumber } from '../../app/steps'
-import type { StepId } from '../../app/steps'
+import { formatDate } from '../../shared/format'
+import { stepNumber } from '../../shared/steps'
+import type { StepId } from '../../shared/steps'
 import { lessonMeta, primarySource, steps } from '../../content/lesson'
 
 type StepPanelProps = {

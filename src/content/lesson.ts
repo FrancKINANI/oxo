@@ -1,5 +1,5 @@
-import { formatDate } from '../app/format'
-import type { StepId } from '../app/steps'
+import { formatDate } from '../shared/format'
+import type { StepId } from '../shared/steps'
 
 export type SourceRef = {
   publisher: string

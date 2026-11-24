@@ -1,5 +1,5 @@
-import { STEPS, stepNumber } from '../../app/steps'
-import type { StepId } from '../../app/steps'
+import { STEPS, stepNumber } from '../../shared/steps'
+import type { StepId } from '../../shared/steps'
 
 type LessonStepperProps = {
   step: StepId
