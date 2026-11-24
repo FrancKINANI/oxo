@@ -37,17 +37,17 @@
 
 ## Lot D — Tuteur et accessibilité
 
-- [ ] D001 Remplacer les déclencheurs de refus par un appariement intention/contexte; traiter « acheter des tomates » et « les soldes » sans faux refus.
-- [ ] D002 Étendre le corpus et créer un jeu doré couvrant hors corpus, misconceptions, adversarial, abstention, sur-refus et conformité.
-- [ ] D003 Partager un piège de focus accessible pour InfoDialog et TutorDock avec fermeture clavier et retour de focus.
-- [ ] D004 S’assurer que les curseurs annoncent leur valeur et leur sens par `aria-valuetext`.
-- [ ] D005 Borner `calculateBasket` contre NaN, valeurs négatives et valeurs supérieures à 100; dédupliquer percentChange/weightedChange.
-- [ ] D006 Relier les termes du glossaire aux concepts correspondants.
-- [ ] D007 Mettre à jour les tests/docs, vérifier/build, mesurer gzip et livrer la PR Lot D après CI verte du lot C.
+- [x] D001 Remplacer les déclencheurs de refus par un appariement intention/contexte; traiter « acheter des tomates » et « les soldes » sans faux refus.
+- [x] D002 Étendre le corpus et créer un jeu doré couvrant hors corpus, misconceptions, adversarial, abstention, sur-refus et conformité.
+- [x] D003 Partager un piège de focus accessible pour InfoDialog et TutorDock avec fermeture clavier et retour de focus.
+- [x] D004 S’assurer que les curseurs annoncent leur valeur et leur sens par `aria-valuetext`.
+- [x] D005 Borner `calculateBasket` contre NaN, valeurs négatives et valeurs supérieures à 100; dédupliquer percentChange/weightedChange.
+- [x] D006 Relier les termes du glossaire aux concepts correspondants.
+- [x] D007 Mettre à jour les tests/docs, vérifier/build, mesurer gzip et livrer la PR Lot D après CI verte du lot C.
 
 ## Clôture
 
-- [ ] Z001 Vérifier ≥3 chiffres HCP avec provenance complète et période de référence octobre 2026.
-- [ ] Z002 Vérifier les quatre étapes de la boucle, le manifeste, i18n, le graphe et les événements locaux.
-- [ ] Z003 Confirmer absence de réseau, LLM, télémétrie, contenu anglais/darija, adaptativité et dépendance runtime ajoutée.
-- [ ] Z004 Dans la PR finale, rappeler les actions humaines : protection `main` avec PR obligatoire/CI verte et déploiement Vercel uniquement depuis `main`.
+- [x] Z001 Vérifier ≥3 chiffres HCP avec provenance complète et période de référence octobre 2026.
+- [x] Z002 Vérifier les quatre étapes de la boucle, le manifeste, i18n, le graphe et les événements locaux.
+- [x] Z003 Confirmer absence de réseau, LLM, télémétrie, contenu anglais/darija, adaptativité et dépendance runtime ajoutée.
+- [x] Z004 Dans la PR finale, rappeler les actions humaines : protection `main` avec PR obligatoire/CI verte et déploiement Vercel uniquement depuis `main`.

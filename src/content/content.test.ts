@@ -18,14 +18,16 @@ describe('concepts', () => {
       expect(concept.simpleDefinition.length).toBeGreaterThan(20)
       expect(concept.source).toMatch(/Haut-Commissariat au Plan|HCP/)
       expect(concept.reviewed.length).toBeGreaterThan(0)
+      expect(concept.relatedTerms.length).toBeGreaterThan(0)
+      expect(concept.relatedTerms.every((term) => concepts.some((candidate) => candidate.term === term))).toBe(true)
     }
   })
 
   it('fait échouer une fiche incomplète avec le nom du champ manquant', () => {
     expect(() => parseConceptMarkdown('test.md', '# Test'))
-      .toThrow(/Définition simple, Source, Date de revue/)
+      .toThrow(/Définition simple, Source, Date de revue, Concepts liés/)
     expect(() => parseConceptMarkdown('sans-titre.md', ''))
-      .toThrow(/titre, Définition simple, Source, Date de revue/)
+      .toThrow(/titre, Définition simple, Source, Date de revue, Concepts liés/)
   })
 
   it('expose les prérequis typés du graphe de concepts', () => {

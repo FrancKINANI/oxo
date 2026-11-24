@@ -28,7 +28,7 @@ export function LessonHeader({ step, result, isInitial, onReset }: LessonHeaderP
       },
       {
         label: fr.lesson.variation,
-        value: formatPercent(result.percentChange),
+        value: formatPercent(result.weightedChange),
         hint: fr.lesson.weighted,
       },
       { label: fr.lesson.food, value: '40 %', hint: fr.lesson.basket },

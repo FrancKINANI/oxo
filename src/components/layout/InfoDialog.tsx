@@ -1,8 +1,9 @@
-import { useEffect, useId, useRef } from 'react'
+import { useId, useRef } from 'react'
 import { formatDate } from '../../shared/format'
 import { concepts } from '../../content/concepts'
 import { editorialReview, lessonMeta, primarySource } from '../../content/lesson'
 import { fr } from '../../content/locales/fr'
+import { useFocusTrap } from '../../shared/useFocusTrap'
 
 export type InfoKind = 'glossaire' | 'sources'
 
@@ -16,26 +17,22 @@ const titles: Record<InfoKind, string> = {
   sources: fr.dialogs.sources,
 }
 
+function conceptAnchor(term: string) {
+  return `concept-${term.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-')}`
+}
+
 export function InfoDialog({ kind, onClose }: InfoDialogProps) {
   const titleId = useId()
-  const closeRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    closeRef.current?.focus()
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [onClose])
+  const dialogRef = useRef<HTMLDivElement>(null)
+  useFocusTrap(dialogRef, true, onClose)
 
   return (
     <div className="modal-layer">
       <div className="modal-scrim" aria-hidden="true" onClick={onClose} />
-      <div className="modal" role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <div ref={dialogRef} className="modal" role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <header className="modal-head">
           <h2 id={titleId}>{titles[kind]}</h2>
-          <button ref={closeRef} className="icon-button small" type="button" aria-label={fr.dialogs.close} onClick={onClose}>
+          <button className="icon-button small" type="button" aria-label={fr.dialogs.close} onClick={onClose}>
             <span aria-hidden="true">✕</span>
           </button>
         </header>
@@ -44,12 +41,20 @@ export function InfoDialog({ kind, onClose }: InfoDialogProps) {
           {kind === 'glossaire' ? (
             <ul className="glossary">
               {concepts.map((concept) => (
-                <li key={concept.term}>
+                <li id={conceptAnchor(concept.term)} key={concept.term}>
                   <h3>{concept.term}</h3>
                   <p>{concept.simpleDefinition}</p>
                   {concept.example && <p className="glossary-extra"><strong>{fr.dialogs.conceptExample} </strong>{concept.example}</p>}
                   {concept.method && <p className="glossary-extra"><strong>{fr.dialogs.method} </strong>{concept.method}</p>}
                   {concept.limit && <p className="glossary-extra"><strong>{fr.dialogs.limit} </strong>{concept.limit}</p>}
+                  {concept.relatedTerms.length > 0 && (
+                    <p className="glossary-extra glossary-related">
+                      <strong>{fr.dialogs.relatedConcepts} : </strong>
+                      {concept.relatedTerms.map((term, index) => (
+                        <span key={term}>{index > 0 ? ', ' : ''}<a href={`#${conceptAnchor(term)}`}>{term}</a></span>
+                      ))}
+                    </p>
+                  )}
                   <small>
                     {concept.source} · {fr.concepts.reviewed} {concept.reviewed}
                   </small>

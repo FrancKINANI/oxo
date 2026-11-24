@@ -6,7 +6,7 @@ import { fr } from '../../../content/locales/fr'
 import type { BasketField } from '../model/useBasketSimulation'
 import type { BasketBreakdownItem, BasketSimulationInput } from '../model/calculateBasket'
 
-const MIN_PERCENT = -20
+const MIN_PERCENT = 0
 const MAX_PERCENT = 30
 
 type RangeControlProps = {
@@ -38,7 +38,7 @@ function RangeControl({ id, label, field, weight, value, onChange }: RangeContro
         step="1"
         value={value}
         style={{ '--fill': `${fill}%` } as CSSProperties}
-        aria-valuetext={fr.simulation.controlValue(formatPercent(value))}
+        aria-valuetext={fr.simulation.controlValue(label, formatPercent(value), weight)}
         onChange={(event) => onChange(field, Number(event.target.value))}
       />
       <div className="range-bounds" aria-hidden="true">

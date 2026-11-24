@@ -8,4 +8,6 @@
 
 **Limite** : l'IPC national ne reproduit pas forcément les dépenses, quantités et habitudes d'une personne.
 
+**Concepts liés** : Inflation
+
 **Date de revue** : 20 novembre 2026.

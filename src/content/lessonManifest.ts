@@ -49,9 +49,9 @@ export const lessonManifest: LessonManifest = {
   simulation: {
     modelId: 'weighted-basket',
     params: [
-      { id: 'foodPercent', min: -20, max: 30, default: 8, isHypothesis: true },
-      { id: 'transportPercent', min: -20, max: 30, default: 5, isHypothesis: true },
-      { id: 'housingPercent', min: -20, max: 30, default: 2, isHypothesis: true },
+      { id: 'foodPercent', min: 0, max: 30, default: 8, isHypothesis: true },
+      { id: 'transportPercent', min: 0, max: 30, default: 5, isHypothesis: true },
+      { id: 'housingPercent', min: 0, max: 30, default: 2, isHypothesis: true },
     ],
   },
   blocks: {

@@ -34,8 +34,8 @@ export const fr = {
     freeDetail: 'Mode libre : les variations saisies sont des hypothèses pédagogiques, pas des données observées.',
     weightDisclaimer: (officialWeight: string) => `Poids alimentaire officiel HCP : ${officialWeight} (base 2017). Tous les poids de ce modèle sont des hypothèses pédagogiques. 12 postes officiels vs 3 postes simplifiés.`,
     total: 'Total du panier', weightCaption: 'Poids',
-    weight: (weight: number) => `${weight} % · hypothèse`, controlValue: (value: string) => `variation de ${value}`,
-    lowerBound: '−20 %', neutralBound: '0', upperBound: '+30 %',
+    weight: (weight: number) => `${weight} % · hypothèse`, controlValue: (label: string, value: string, weight: string) => `${label} : variation ${value}, poids ${weight}`,
+    lowerBound: '0 %', neutralBound: '+15 %', upperBound: '+30 %',
   },
   course: { moduleIndex: '01', currentCount: '1/2', completedCount: '1 / 4', progressPercent: '25%' },
   dialogs: {
@@ -45,7 +45,7 @@ export const fr = {
     consultHcp: 'Consulter la publication du HCP',
     officialSources: 'Les chiffres affichés proviennent de publications officielles. Les variations du simulateur sont des hypothèses pédagogiques, pas des données publiées.',
     sourcesDisclaimer: 'OXO ne fournit ni conseil financier ni prévision. Une donnée non vérifiée n’est pas publiée : elle est signalée comme hypothèse.',
-    conceptExample: 'Exemple marocain ·', method: 'Méthode ·', limit: 'Limite ·',
+    conceptExample: 'Exemple marocain ·', method: 'Méthode ·', limit: 'Limite ·', relatedConcepts: 'Concepts liés',
   },
   tutor: {
     label: 'Tuteur', aria: 'Tuteur local', heading: 'Demander au tuteur', clear: 'Effacer la conversation', close: 'Fermer le tuteur',

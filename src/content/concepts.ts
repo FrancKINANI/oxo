@@ -12,6 +12,7 @@ export type Concept = {
   source: string
   limit?: string
   reviewed: string
+  relatedTerms: string[]
 }
 
 const files = import.meta.glob('../../content/morocco/concepts/*.md', {
@@ -20,7 +21,7 @@ const files = import.meta.glob('../../content/morocco/concepts/*.md', {
   eager: true,
 }) as Record<string, string>
 
-const requiredFields = ['Définition simple', 'Source', 'Date de revue'] as const
+const requiredFields = ['Définition simple', 'Source', 'Date de revue', 'Concepts liés'] as const
 
 export function parseConceptMarkdown(file: string, raw: string): Concept {
   const lines = raw.split('\n')
@@ -47,9 +48,16 @@ export function parseConceptMarkdown(file: string, raw: string): Concept {
     source: fields['Source'],
     limit: fields['Limite'],
     reviewed: fields['Date de revue'],
+    relatedTerms: fields['Concepts liés'].split(',').map((item) => item.trim()).filter(Boolean),
   }
 }
 
 export const concepts: Concept[] = Object.entries(files)
   .map(([file, raw]) => parseConceptMarkdown(file, raw))
   .sort((a, b) => a.term.localeCompare(b.term, 'fr'))
+
+const knownTerms = new Set(concepts.map((concept) => concept.term))
+for (const concept of concepts) {
+  const missing = concept.relatedTerms.filter((term) => !knownTerms.has(term))
+  if (missing.length) throw new Error(`Fiche de concept invalide (${concept.term}) : concept(s) lié(s) inconnu(s) — ${missing.join(', ')}`)
+}

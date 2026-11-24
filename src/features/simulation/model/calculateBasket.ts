@@ -6,7 +6,6 @@ export type BasketSimulationInput = {
 
 export type BasketSimulationResult = {
   resultDh: number
-  percentChange: number
   weightedChange: number
 }
 
@@ -33,23 +32,29 @@ export const BASKET_CATEGORIES: ReadonlyArray<{
   { id: 'housing', label: 'Logement', weight: 0.35, field: 'housingPercent' },
 ]
 
-export function calculateBasket({
-  foodPercent,
-  transportPercent,
-  housingPercent,
-}: BasketSimulationInput): BasketSimulationResult {
-  const values = [foodPercent, transportPercent, housingPercent]
+function validateInput(input: BasketSimulationInput) {
+  for (const field of ['foodPercent', 'transportPercent', 'housingPercent'] as const) {
+    const value = input[field]
+    if (!Number.isFinite(value)) throw new RangeError(`${field} doit être un nombre fini`)
+    if (value < 0 || value > 100) throw new RangeError(`${field} doit être compris entre 0 et 100`)
+  }
+}
+
+export function calculateBasket(input: BasketSimulationInput): BasketSimulationResult {
+  validateInput(input)
+  const values = [input.foodPercent, input.transportPercent, input.housingPercent]
   const weightedChange = values.reduce(
     (total, value, index) => total + value * BASKET_CATEGORIES[index].weight,
     0,
   )
   const resultDh = Math.round(BASE_BASKET_DH * (1 + weightedChange / 100))
 
-  return { resultDh, percentChange: weightedChange, weightedChange }
+  return { resultDh, weightedChange }
 }
 
 /** Montant par poste, avant et après la variation simulée. */
 export function calculateBreakdown(input: BasketSimulationInput): BasketBreakdownItem[] {
+  validateInput(input)
   return BASKET_CATEGORIES.map(({ id, label, weight, field }) => {
     const baseDh = BASE_BASKET_DH * weight
     return {
