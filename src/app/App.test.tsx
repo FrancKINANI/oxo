@@ -34,6 +34,11 @@ describe('App', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('panier')
     expect(within(stage()).getByText('Votre panier')).toBeInTheDocument()
     expect(within(stage()).getByText('IPC national')).toBeInTheDocument()
+    expect(within(stage()).getAllByText('+1,9 %')).toHaveLength(2)
+    expect(within(stage()).getByText('Produits alimentaires')).toBeInTheDocument()
+    expect(within(stage()).getByText('Transport')).toBeInTheDocument()
+    expect(within(stage()).getByText('Légumes')).toBeInTheDocument()
+    expect(within(stage()).queryByText(/12 postes officiels vs 3 postes simplifiés/i)).not.toBeInTheDocument()
     expect(screen.queryByRole('slider')).not.toBeInTheDocument()
   })
 
@@ -47,6 +52,19 @@ describe('App', () => {
     fireEvent.change(screen.getByLabelText(/alimentation/i), { target: { value: '20' } })
 
     expect(total()).toHaveTextContent('264 DH')
+  })
+
+  it('charge le scénario réel HCP puis revient au mode hypothèse après modification', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await goToSimulation()
+
+    await user.click(screen.getByRole('button', { name: 'Scénario réel octobre 2026' }))
+    expect(screen.getByText(/Alimentation \+0,3 % et transport \+11,6 % sur un an sont observés/i)).toBeInTheDocument()
+    expect(screen.getByText(/Logement est laissé à 0 % comme hypothèse pédagogique/i)).toBeInTheDocument()
+
+    fireEvent.change(screen.getByLabelText(/alimentation/i), { target: { value: '1' } })
+    expect(screen.getByText(/Mode libre : les variations saisies sont des hypothèses pédagogiques/i)).toBeInTheDocument()
   })
 
   it('réinitialise le scénario depuis le bouton d’en-tête', async () => {
@@ -101,8 +119,10 @@ describe('App', () => {
 
     const dialog = screen.getByRole('dialog', { name: /sources/i })
     expect(within(dialog).getByText('Haut-Commissariat au Plan')).toBeInTheDocument()
-    expect(within(dialog).getAllByText('20 nov. 2026')).toHaveLength(2)
-    expect(within(dialog).getByText('novembre 2026')).toBeInTheDocument()
+    expect(within(dialog).getAllByText('24 nov. 2026')).toHaveLength(2)
+    expect(within(dialog).getAllByText('20 nov. 2026')).toHaveLength(1)
+    expect(within(dialog).getByText('octobre 2026')).toBeInTheDocument()
+    expect(within(dialog).getByText('À valider (24 nov. 2026)')).toBeInTheDocument()
   })
 
   it('répond aux questions du tuteur dans le dock', async () => {

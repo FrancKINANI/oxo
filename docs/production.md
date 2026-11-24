@@ -153,16 +153,25 @@ retenu, la liste minimale est :
 ## Accessibilité
 
 En place : `lang="fr"`, lien d’évitement, repères sémantiques, focus visible, cibles de 44 px
-minimum, dialogues fermables avec `Échap`, dock du tuteur `inert` quand il est fermé, respect de
-`prefers-reduced-motion`, contrastes des deux thèmes.
+minimum, dialogues fermables avec `Échap`, dock du tuteur `inert` quand il est fermé, curseurs
+avec `aria-valuetext`, respect de `prefers-reduced-motion`, contrastes des deux thèmes.
 
 Écarts connus avant de revendiquer WCAG 2.2 AA :
 
 - **piège de focus absent** dans `InfoDialog` et `TutorDock` alors que `aria-modal="true"` est
   posé : la tabulation peut sortir de la boîte ;
 - aucun test automatisé d’accessibilité (axe) ni parcours lecteur d’écran ;
-- les curseurs natifs sont utilisables au clavier, mais la valeur affichée n’est pas encore
-  reliée par `aria-valuetext`.
+- les curseurs natifs sont utilisables au clavier; la valeur est annoncée, mais leur description
+  pourrait aussi mentionner le poids pédagogique.
+
+## Données pédagogiques observées
+
+Les chiffres HCP sont compilés dans `src/content/dataSnapshots.ts`, avec l’identifiant du
+snapshot, la période de référence et de comparaison, l’unité, la géographie, l’éditeur, l’URL,
+la date de publication, la date de collecte et le statut de vérification. Le navigateur ne
+récupère aucune donnée à l’ouverture. Les valeurs observées d’octobre 2026 sont distinguées des
+hypothèses de simulation. Le poids officiel alimentaire de 37,28 % concerne le panier HCP base
+2017; les poids 40/25/35 du panier pédagogique ne sont pas des pondérations officielles.
 
 Ces trois points sont de petite taille et devraient précéder une communication « accessible ».
 
@@ -209,6 +218,6 @@ local avec `npm run preview`.
 
 ## Budget de performance actuel
 
-Mesuré le 24 novembre 2026 sur `v0.1.0` : 38 modules, JavaScript 76,9 kB gzip, CSS 5,6 kB gzip.
-Ce n’est pas un plafond contractuel, mais toute hausse supérieure à 10 % mérite une
-justification.
+Mesuré le 24 novembre 2026 sur le build de cette branche : 39 modules, JavaScript 78,13 kB
+gzip et CSS 5,78 kB gzip. La baseline du MVP était de 76,9 kB JavaScript et 5,6 kB CSS gzip;
+la hausse JavaScript est de 1,6 %, sous le seuil de 10 %.

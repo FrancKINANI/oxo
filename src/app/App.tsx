@@ -82,6 +82,8 @@ export function App() {
               breakdown={basket.breakdown}
               totalDh={basket.result.resultDh}
               onChange={basket.setField}
+              onUseOctober2026Scenario={basket.useOctober2026Scenario}
+              scenarioMode={basket.scenarioMode}
             />
           )}
 

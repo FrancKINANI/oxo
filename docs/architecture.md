@@ -17,10 +17,11 @@ Le visiteur charge un bundle statique depuis Vercel. `main.tsx` monte `App` dans
 
 `App` est la seule coquille : elle tient l’étape courante, le thème, le tiroir de navigation
 et l’ouverture des dialogues, puis compose les quatre régions visibles — scènes d’étape,
-panneau d’étape, tuteur flottant, dialogues glossaire et sources. Les données viennent de deux
-modules purs :
+panneau d’étape, tuteur flottant, dialogues glossaire et sources. Le contenu et le calcul
+viennent de modules purs :
 
-- `src/content/lesson.ts` : textes, sources et métadonnées éditoriales ;
+- `src/content/lesson.ts` : textes, références par identifiant stable et métadonnées éditoriales ;
+- `src/content/dataSnapshots.ts` : snapshots HCP figés au build, séries, périodes, unités et provenance ;
 - `src/features/simulation/model/` : calcul du panier et hook d’état.
 
 Le tuteur est local : ses réponses sont des règles déterministes dans
@@ -35,7 +36,7 @@ Le tuteur est local : ses réponses sont des règles déterministes dans
 | Routage d’étape | Lecture/écriture de `?etape=` | `src/app/route.ts` |
 | Primitives | Formatage, étapes, thème | `src/shared/format.ts`, `src/shared/steps.ts`, `src/shared/theme.ts` |
 | Thème | `data-theme` + `localStorage` | `src/shared/theme.ts`, `public/theme-init.js` |
-| Contenu | Leçon typée | `src/content/lesson.ts` |
+| Contenu | Leçon typée et snapshots HCP | `src/content/lesson.ts`, `src/content/dataSnapshots.ts` |
 | Glossaire | Markdown compilé et validé | `src/content/concepts.ts`, `content/morocco/concepts/*.md` |
 | Scène 1 | Panier personnel face à l’IPC | `src/features/prices/components/PriceStage.tsx` |
 | Scène 2 | Simulation à hypothèses visibles | `src/features/simulation/components/BasketStage.tsx` |
@@ -72,8 +73,16 @@ extrait le titre et les champs `**Définition simple**`, `**Source**` et `**Date
 Un champ manquant lève une erreur : le build échoue, puis la CI. Aucune fiche incomplète ne peut
 donc atteindre la production.
 
-Les textes d’interface suivent la même règle : ils vivent dans `lesson.ts`, jamais recopiés
-dans un composant. Modifier un texte, c’est modifier un seul fichier, revu et daté.
+Les textes d’interface liés à la leçon vivent dans `lesson.ts`. Les chiffres affichés sont liés
+à des identifiants de snapshots dans `dataSnapshots.ts`; chaque point conserve sa période de
+référence et de comparaison, unité, géographie et source. Le contrôle éditorial du contenu
+touché est déclaré `to_review` jusqu’à validation humaine.
+
+Le premier snapshot couvre l’IPC marocain d’octobre 2026, publié par le HCP le 20 novembre
+2026. Il comprend l’IPC national (+1,9 % sur un an), les produits alimentaires (+0,3 % sur un
+an), le transport (+11,6 % sur un an) et les légumes (+6,8 % sur un mois). Le poids alimentaire
+de 37,28 % est documenté séparément comme panier base 2017. Aucun chiffre n’est récupéré au
+runtime.
 
 ## Livraison
 
@@ -108,7 +117,7 @@ branche n’est pas active. Ce point est traité dans
 
 - **Pas de prérendu.** Le HTML initial ne contient pas le contenu de l’étape ; les robots
   d’aperçu social ne voient que les métadonnées génériques d’`index.html`.
-- **Pas de piège de focus.** Les dialogues déplacent le focus et répondent à `Échap`, mais la
-  tabulation peut sortir de la boîte. Correctif prévu : boucle de focus partagée.
+- **Piège de focus à compléter.** Les dialogues déplacent le focus et répondent à `Échap`, mais
+  la tabulation peut sortir de la boîte. Le lot D doit fournir une boucle partagée.
 - **Tuteur non génératif.** Les réponses couvrent un corpus fermé ; une question hors corpus
   reçoit une abstention explicite.

@@ -76,6 +76,7 @@ export function StepPanel({ step, onSelectStep, onRestart, onOpenTutor }: StepPa
           Référence : {primarySource.referencePeriod} · vérifiée le{' '}
           {formatDate(primarySource.checkedAt)}
         </small>
+        <small>Publiée le {formatDate(primarySource.publicationDate)} · snapshot {primarySource.snapshotId}</small>
         <small>Révision éditoriale : {formatDate(lessonMeta.revision)}</small>
         <a href={primarySource.url} target="_blank" rel="noopener noreferrer">
           Consulter la source

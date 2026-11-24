@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef } from 'react'
 import { formatDate } from '../../shared/format'
 import { concepts } from '../../content/concepts'
-import { lessonMeta, primarySource } from '../../content/lesson'
+import { editorialReview, lessonMeta, primarySource } from '../../content/lesson'
 
 export type InfoKind = 'glossaire' | 'sources'
 
@@ -68,10 +68,14 @@ export function InfoDialog({ kind, onClose }: InfoDialogProps) {
                 <dd>{primarySource.title}</dd>
                 <dt>Période de référence</dt>
                 <dd>{primarySource.referencePeriod}</dd>
+                <dt>Date de publication</dt>
+                <dd>{formatDate(primarySource.publicationDate)}</dd>
                 <dt>Dernière vérification</dt>
                 <dd>{formatDate(primarySource.checkedAt)}</dd>
                 <dt>Révision éditoriale</dt>
                 <dd>{formatDate(lessonMeta.revision)}</dd>
+                <dt>Statut éditorial</dt>
+                <dd>À valider ({formatDate(editorialReview.reviewedAt)})</dd>
               </dl>
               <a href={primarySource.url} target="_blank" rel="noopener noreferrer">
                 Consulter la publication du HCP
