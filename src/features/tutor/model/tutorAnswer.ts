@@ -1,3 +1,5 @@
+export const TUTOR_ABSTENTION_RESPONSE = 'Je ne dispose pas d’une source vérifiée dans le corpus approuvé pour répondre précisément à cette question. Reformulez-la autour de l’inflation, de l’IPC ou du scénario du panier.'
+
 export function tutorAnswer(question: string): string {
   const normalized = question.toLocaleLowerCase('fr')
 
@@ -21,5 +23,5 @@ export function tutorAnswer(question: string): string {
   ) {
     return 'Ne partagez ici aucun revenu, solde, identifiant ou mot de passe. Je peux répondre à une question générale sans données financières personnelles.'
   }
-  return 'Je ne dispose pas d’une source vérifiée dans le corpus approuvé pour répondre précisément à cette question. Reformulez-la autour de l’inflation, de l’IPC ou du scénario du panier.'
+  return TUTOR_ABSTENTION_RESPONSE
 }

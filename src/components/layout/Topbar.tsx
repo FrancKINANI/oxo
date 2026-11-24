@@ -1,4 +1,5 @@
 import type { StepId } from '../../shared/steps'
+import { STEPS } from '../../shared/steps'
 import type { Theme } from '../../shared/theme'
 import type { InfoKind } from './InfoDialog'
 import { fr } from '../../content/locales/fr'
@@ -48,22 +49,17 @@ export function Topbar({
       </div>
 
       <nav className="mode-tabs" aria-label={fr.app.modes}>
-        <button
-          className={`mode-tab ${step === 'observer' ? 'active' : ''}`}
-          type="button"
-          aria-current={step === 'observer' ? 'page' : undefined}
-          onClick={() => onSelectStep('observer')}
-        >
-          {fr.app.learn}
-        </button>
-        <button
-          className={`mode-tab ${step === 'manipuler' ? 'active' : ''}`}
-          type="button"
-          aria-current={step === 'manipuler' ? 'page' : undefined}
-          onClick={() => onSelectStep('manipuler')}
-        >
-          {fr.app.simulate}
-        </button>
+        {STEPS.map((item) => (
+          <button
+            className={`mode-tab ${step === item.id ? 'active' : ''}`}
+            type="button"
+            aria-current={step === item.id ? 'page' : undefined}
+            key={item.id}
+            onClick={() => onSelectStep(item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
         <button className="mode-tab" type="button" onClick={() => onOpenInfo('sources')}>
           {fr.app.sources}
         </button>

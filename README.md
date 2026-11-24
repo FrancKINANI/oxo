@@ -3,9 +3,9 @@
 Application web pour comprendre les prix, l’inflation et les mécanismes économiques au Maroc,
 à partir de sources officielles et de simulations dont les hypothèses restent visibles.
 
-Le produit est aujourd’hui un **pilote avancé** : les deux premières étapes du parcours
-(observer, manipuler) sont complètes et testées ; le tuteur répond par règles locales, sans
-modèle externe.
+Le produit est aujourd’hui un **pilote avancé** : le parcours observer → manipuler → interpréter
+→ synthèse est fonctionnel, avec progression enregistrée uniquement dans le navigateur ; le
+tuteur répond par règles locales, sans modèle externe.
 
 ## Démarrer
 
@@ -33,11 +33,12 @@ npm run dev
 src/
   app/            coquille, étape, thème, routage d’URL, ErrorBoundary
   components/     barre supérieure, navigation, panneau, dialogues
-  content/        leçon typée et glossaire compilé depuis le Markdown
+  content/        manifeste, locale française et glossaire compilé depuis le Markdown
   shared/         formatage, étapes, thème (primitives sans dépendance UI)
   features/
     prices/       scène « panier face à l’IPC »
     simulation/   modèle du panier, hook d’état, scène « manipuler »
+    lesson/       quiz, synthèse, auto-évaluation et progression locale
     tutor/        règles locales et interface du tuteur
   styles/         tokens, mise en page, thèmes, responsive
 content/
@@ -48,7 +49,7 @@ Le détail des flux et des décisions est dans [docs/architecture.md](docs/archi
 
 ## Contenu éditorial
 
-- Les textes d’interface vivent dans `src/content/lesson.ts`.
+- Les chaînes d’interface vivent dans `src/content/locales/fr.ts`; la leçon dans son manifeste typé.
 - Les fiches du glossaire vivent dans `content/morocco/concepts/*.md`, avec les champs
   `**Définition simple**`, `**Source**` et `**Date de revue**` obligatoires.
 - Une fiche incomplète fait échouer le build et la CI.

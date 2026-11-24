@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import type { StepId } from '../../shared/steps'
+import { STEPS, stepNumber } from '../../shared/steps'
 import { fr } from '../../content/locales/fr'
 
 type CourseNavProps = {
@@ -38,29 +39,21 @@ export function CourseNav({ step, open, onSelectStep, onClose }: CourseNavProps)
             <div className="nav-group-head">
               <span className="nav-group-icon">{fr.course.moduleIndex}</span>
               <strong>{fr.navigation.module}</strong>
-              <span className="nav-count">{fr.course.currentCount}</span>
+              <span className="nav-count">{stepNumber(step)}/{STEPS.length}</span>
             </div>
             <ul className="nav-list">
-              <li>
-                <button
-                  className={`nav-item ${step === 'observer' ? 'active' : ''}`}
-                  type="button"
-                  aria-current={step === 'observer' ? 'step' : undefined}
-                  onClick={() => onSelectStep('observer')}
-                >
-                  {fr.navigation.steps[0]}
-                </button>
-              </li>
-              <li>
-                <button
-                  className={`nav-item ${step === 'manipuler' ? 'active' : ''}`}
-                  type="button"
-                  aria-current={step === 'manipuler' ? 'step' : undefined}
-                  onClick={() => onSelectStep('manipuler')}
-                >
-                  {fr.navigation.steps[1]}
-                </button>
-              </li>
+              {STEPS.map((item) => (
+                <li key={item.id}>
+                  <button
+                    className={`nav-item ${step === item.id ? 'active' : ''}`}
+                    type="button"
+                    aria-current={step === item.id ? 'step' : undefined}
+                    onClick={() => onSelectStep(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </section>
 

@@ -108,6 +108,44 @@ export const steps: Record<StepId, StepContent> = {
       ],
     },
   },
+  interpreter: {
+    id: 'interpreter',
+    title: 'Interprétez les chiffres',
+    lead: 'Répondez aux questions puis expliquez le mécanisme avec vos mots.',
+    durationMinutes: 5,
+    level: 'Débutant',
+    stage: {
+      title: 'Vérifier votre compréhension',
+      badge: 'Réponses expliquées',
+      note: 'Chaque réponse incorrecte indique le raisonnement à revoir.',
+    },
+    narration: {
+      title: 'Relier le résultat à ses causes',
+      body: 'Un chiffre seul ne suffit pas : vérifiez la période, la composition du panier et le poids de chaque poste avant de l’interpréter.',
+      keyIdea: 'L’IPC est une moyenne pondérée; il ne décrit pas exactement chaque panier personnel.',
+      learn: ['Repérer les limites d’un chiffre isolé', 'Expliquer le rôle des poids', 'Distinguer simulation et prévision'],
+    },
+    stats: [],
+  },
+  synthese: {
+    id: 'synthese',
+    title: 'Ce qu’il faut retenir',
+    lead: 'Retrouvez l’idée clé, les limites et les sources, puis consultez votre progression locale.',
+    durationMinutes: 3,
+    level: 'Débutant',
+    stage: {
+      title: 'Synthèse de la leçon',
+      badge: 'Sources et progression locale',
+      note: 'La progression reste dans le stockage local de ce navigateur.',
+    },
+    narration: {
+      title: 'Une mesure utile, avec ses limites',
+      body: lessonManifest.blocks.formalization.body,
+      keyIdea: 'Les prix observés, les poids du panier et la période doivent être lus ensemble.',
+      learn: ['Vérifier la source et la période', 'Comparer votre panier à la moyenne nationale', 'Nommer les hypothèses du modèle'],
+    },
+    stats: [],
+  },
 }
 
 export const panierExample = {
