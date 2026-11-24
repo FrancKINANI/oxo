@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Artefacts de travail archify (les diagrammes livrés sont dans docs/diagrams)
+.archify/

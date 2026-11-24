@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "OXO — composition de l’application",
+    "locale": "fr",
+    "output": "docs/diagrams/architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/FrancKINANI/oxo",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4d7b8aa01ac1ef6a27e8a29357a89b8834996dbf"
+    }
+  },
+  "layout": {
+    "mode": "auto"
+  },
+  "components": [
+    {
+      "id": "visitor",
+      "type": "external",
+      "label": "Visiteur",
+      "sublabel": "desktop et mobile",
+      "tag": "sans compte"
+    },
+    {
+      "id": "hosting",
+      "type": "cloud",
+      "label": "Vercel",
+      "sublabel": "CDN + assets statiques",
+      "tag": "dist/",
+      "sources": [
+        {
+          "path": "vercel.json",
+          "line": 3,
+          "end_line": 6
+        }
+      ]
+    },
+    {
+      "id": "entry",
+      "type": "frontend",
+      "label": "Point d’entrée",
+      "sublabel": "React 19 · ErrorBoundary",
+      "tag": "main.tsx",
+      "sources": [
+        {
+          "path": "src/main.tsx",
+          "line": 1,
+          "end_line": 13
+        }
+      ]
+    },
+    {
+      "id": "shell",
+      "type": "frontend",
+      "label": "Coquille App",
+      "sublabel": "étape, thème, tiroir mobile",
+      "tag": "App.tsx",
+      "sources": [
+        {
+          "path": "src/app/App.tsx",
+          "line": 18,
+          "end_line": 45
+        },
+        {
+          "path": "src/app/App.tsx",
+          "line": 47,
+          "end_line": 107
+        }
+      ]
+    },
+    {
+      "id": "stages",
+      "type": "frontend",
+      "label": "Scènes d’étape",
+      "sublabel": "Observer · Manipuler",
+      "tag": "étape courante",
+      "sources": [
+        {
+          "path": "src/features/prices/components/PriceStage.tsx",
+          "line": 4,
+          "end_line": 12
+        },
+        {
+          "path": "src/features/simulation/components/BasketStage.tsx",
+          "line": 1,
+          "end_line": 8
+        }
+      ]
+    },
+    {
+      "id": "panel",
+      "type": "frontend",
+      "label": "Panneau d’étape",
+      "sublabel": "narration, source, actions",
+      "tag": "StepPanel",
+      "sources": [
+        {
+          "path": "src/components/layout/StepPanel.tsx",
+          "line": 18,
+          "end_line": 36
+        }
+      ]
+    },
+    {
+      "id": "tutor",
+      "type": "backend",
+      "label": "Tuteur local",
+      "sublabel": "règles, sans modèle",
+      "tag": "hors ligne",
+      "sources": [
+        {
+          "path": "src/features/tutor/model/tutorAnswer.ts",
+          "line": 1,
+          "end_line": 25
+        }
+      ]
+    },
+    {
+      "id": "content",
+      "type": "backend",
+      "label": "Contenu de leçon",
+      "sublabel": "textes, sources, étapes",
+      "tag": "lesson.ts",
+      "sources": [
+        {
+          "path": "src/content/lesson.ts",
+          "line": 37,
+          "end_line": 54
+        }
+      ]
+    },
+    {
+      "id": "basket",
+      "type": "backend",
+      "label": "Modèle du panier",
+      "sublabel": "variation pondérée",
+      "tag": "useMemo",
+      "sources": [
+        {
+          "path": "src/features/simulation/model/calculateBasket.ts",
+          "line": 23,
+          "end_line": 62
+        },
+        {
+          "path": "src/features/simulation/model/useBasketSimulation.ts",
+          "line": 16,
+          "end_line": 31
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Navigateur",
+      "wraps": [
+        "entry",
+        "shell",
+        "stages",
+        "panel",
+        "tutor",
+        "content",
+        "basket"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "visitor-hosting",
+      "from": "visitor",
+      "to": "hosting",
+      "label": "HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "hosting-entry",
+      "from": "hosting",
+      "to": "entry",
+      "label": "bundle statique",
+      "variant": "emphasis"
+    },
+    {
+      "id": "entry-shell",
+      "from": "entry",
+      "to": "shell",
+      "label": "monte <App/>"
+    },
+    {
+      "id": "shell-stages",
+      "from": "shell",
+      "to": "stages",
+      "label": "étape courante"
+    },
+    {
+      "id": "shell-panel",
+      "from": "shell",
+      "to": "panel",
+      "label": "étape courante"
+    },
+    {
+      "id": "shell-tutor",
+      "from": "shell",
+      "to": "tutor",
+      "label": "ouvre le dock"
+    },
+    {
+      "id": "shell-basket",
+      "from": "shell",
+      "to": "basket",
+      "label": "useBasketSimulation"
+    },
+    {
+      "id": "content-stages",
+      "from": "content",
+      "to": "stages",
+      "label": "textes de l’étape"
+    },
+    {
+      "id": "content-panel",
+      "from": "content",
+      "to": "panel",
+      "label": "narration, source"
+    },
+    {
+      "id": "basket-stages",
+      "from": "basket",
+      "to": "stages",
+      "label": "résultat + ventilation",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Client uniquement",
+      "items": [
+        "Aucun serveur applicatif : le bundle statique suffit",
+        "CSP stricte : script-src 'self' et connect-src 'self'",
+        "Thème et étape mémorisés côté navigateur, sans compte"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Contenu versionné",
+      "items": [
+        "Textes d’interface dans lesson.ts, fiches dans content/*.md",
+        "Une fiche incomplète fait échouer la compilation et les tests",
+        "Chaque source porte une date de revue affichée"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Tuteur borné",
+      "items": [
+        "Réponses par règles locales, aucun appel réseau",
+        "Refuse les données financières personnelles",
+        "Le fournisseur réel reste une décision ouverte (T020)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "OXO — du commit à la mise en ligne",
+    "locale": "fr",
+    "output": "docs/diagrams/delivery-workflow.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/FrancKINANI/oxo",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4d7b8aa01ac1ef6a27e8a29357a89b8834996dbf"
+    }
+  },
+  "lanes": [
+    {
+      "id": "dev",
+      "label": "Développement"
+    },
+    {
+      "id": "ci",
+      "label": "CI GitHub Actions"
+    },
+    {
+      "id": "vercel",
+      "label": "Vercel"
+    },
+    {
+      "id": "prod",
+      "label": "Production"
+    }
+  ],
+  "phases": [
+    {
+      "id": "commit",
+      "label": "Commit",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "gates",
+      "label": "Contrôles",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "live",
+      "label": "En ligne",
+      "fromCol": 4,
+      "toCol": 4,
+      "variant": "dashed"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "dev",
+      "lane": "dev",
+      "col": 0,
+      "type": "external",
+      "label": "Développeur",
+      "sublabel": "commit local",
+      "width": 132
+    },
+    {
+      "id": "push",
+      "lane": "dev",
+      "col": 1,
+      "type": "messagebus",
+      "label": "Push / PR",
+      "sublabel": "événement Git",
+      "width": 132,
+      "sources": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "line": 3,
+          "end_line": 6
+        }
+      ]
+    },
+    {
+      "id": "verify",
+      "lane": "ci",
+      "col": 2,
+      "type": "security",
+      "label": "Vérifications",
+      "sublabel": "types · lint · tests",
+      "tag": "npm ci",
+      "width": 148,
+      "sources": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "line": 24,
+          "end_line": 33
+        }
+      ]
+    },
+    {
+      "id": "build",
+      "lane": "ci",
+      "col": 3,
+      "type": "backend",
+      "label": "Build",
+      "sublabel": "tsc -b && vite build",
+      "tag": "dist/",
+      "width": 148,
+      "sources": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "line": 35,
+          "end_line": 36
+        }
+      ]
+    },
+    {
+      "id": "artifact",
+      "lane": "ci",
+      "col": 4,
+      "type": "database",
+      "label": "Artefact dist",
+      "sublabel": "conservé 7 jours",
+      "width": 132,
+      "sources": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "line": 38,
+          "end_line": 41
+        }
+      ]
+    },
+    {
+      "id": "deploy",
+      "lane": "vercel",
+      "col": 2,
+      "type": "cloud",
+      "label": "Déploiement",
+      "sublabel": "build sur push",
+      "tag": "vercel.json",
+      "width": 148,
+      "sources": [
+        {
+          "path": "vercel.json",
+          "line": 3,
+          "end_line": 6
+        }
+      ]
+    },
+    {
+      "id": "cdn",
+      "lane": "vercel",
+      "col": 3,
+      "type": "cloud",
+      "label": "CDN",
+      "sublabel": "assets immuables",
+      "tag": "cache 1 an",
+      "width": 132,
+      "sources": [
+        {
+          "path": "vercel.json",
+          "line": 29,
+          "end_line": 32
+        }
+      ]
+    },
+    {
+      "id": "browser",
+      "lane": "prod",
+      "col": 4,
+      "type": "frontend",
+      "label": "Visiteur",
+      "sublabel": "bundle + en-têtes",
+      "tag": "HTTPS",
+      "width": 132,
+      "sources": [
+        {
+          "path": "vercel.json",
+          "line": 7,
+          "end_line": 24
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "dev-push",
+      "from": "dev",
+      "to": "push",
+      "label": "commit",
+      "role": "main"
+    },
+    {
+      "id": "push-verify",
+      "from": "push",
+      "to": "verify",
+      "label": "déclenche",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "verify-build",
+      "from": "verify",
+      "to": "build",
+      "label": "si vert",
+      "role": "main"
+    },
+    {
+      "id": "build-artifact",
+      "from": "build",
+      "to": "artifact",
+      "label": "téléverse",
+      "role": "branch",
+      "variant": "dashed"
+    },
+    {
+      "id": "push-deploy",
+      "from": "push",
+      "to": "deploy",
+      "label": "webhook Vercel",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "deploy-cdn",
+      "from": "deploy",
+      "to": "cdn",
+      "label": "publie",
+      "role": "main"
+    },
+    {
+      "id": "cdn-browser",
+      "from": "cdn",
+      "to": "browser",
+      "label": "assets statiques",
+      "role": "main",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Point de vigilance",
+      "items": [
+        "La CI et Vercel sont deux chaînes indépendantes : un push rouge peut être déployé",
+        "La protection de la branche main (GitHub) est à activer côté compte",
+        "L’artefact CI sert au diagnostic, Vercel reconstruit le bundle"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Ce que la CI prouve",
+      "items": [
+        "Types, lint et 21 tests passent sur Node 22",
+        "Le build de production réussit avec les mêmes scripts",
+        "Le workflow est rejoué sur chaque pull request"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Ce que la plateforme ajoute",
+      "items": [
+        "CSP et en-têtes de sécurité appliqués à toutes les routes",
+        "Assets hachés servis avec un cache d’un an",
+        "theme-init.js revalidé pour éviter un thème figé"
+      ]
+    }
+  ]
+}

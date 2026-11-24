@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "OXO — du Markdown au glossaire",
+    "locale": "fr",
+    "output": "docs/diagrams/content-pipeline.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/FrancKINANI/oxo",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4d7b8aa01ac1ef6a27e8a29357a89b8834996dbf"
+    }
+  },
+  "stages": [
+    {
+      "label": "Sources"
+    },
+    {
+      "label": "Compilation"
+    },
+    {
+      "label": "Build"
+    },
+    {
+      "label": "Livraison"
+    },
+    {
+      "label": "Interface"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "fiches",
+      "type": "database",
+      "label": "Fiches Markdown",
+      "sublabel": "concepts/*.md",
+      "stage": 0,
+      "row": 0,
+      "tag": "2 fiches",
+      "sources": [
+        {
+          "path": "content/morocco/concepts/ipc.md",
+          "line": 1,
+          "end_line": 11
+        }
+      ]
+    },
+    {
+      "id": "lesson",
+      "type": "backend",
+      "label": "Contenu de leçon",
+      "sublabel": "textes + étapes",
+      "stage": 0,
+      "row": 2,
+      "tag": "lesson.ts",
+      "sources": [
+        {
+          "path": "src/content/lesson.ts",
+          "line": 37,
+          "end_line": 54
+        }
+      ]
+    },
+    {
+      "id": "compiler",
+      "type": "backend",
+      "label": "Compilation",
+      "sublabel": "parse() des fiches",
+      "stage": 1,
+      "row": 0,
+      "tag": "Concept[]",
+      "sources": [
+        {
+          "path": "src/content/concepts.ts",
+          "line": 17,
+          "end_line": 21
+        },
+        {
+          "path": "src/content/concepts.ts",
+          "line": 25,
+          "end_line": 51
+        }
+      ]
+    },
+    {
+      "id": "vite",
+      "type": "backend",
+      "label": "Build Vite",
+      "sublabel": "tsc puis vite",
+      "stage": 2,
+      "row": 2,
+      "tag": "modules liés",
+      "sources": [
+        {
+          "path": "package.json",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "id": "bundle",
+      "type": "database",
+      "label": "dist/assets",
+      "sublabel": "JS + CSS minifiés",
+      "stage": 3,
+      "row": 2,
+      "tag": "servi par CDN",
+      "sources": [
+        {
+          "path": "vercel.json",
+          "line": 4,
+          "end_line": 6
+        }
+      ]
+    },
+    {
+      "id": "glossary",
+      "type": "frontend",
+      "label": "Glossaire",
+      "sublabel": "boîte de dialogue",
+      "stage": 4,
+      "row": 0,
+      "tag": "au clic",
+      "sources": [
+        {
+          "path": "src/components/layout/InfoDialog.tsx",
+          "line": 43,
+          "end_line": 57
+        }
+      ]
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "Scènes et panneau",
+      "sublabel": "étape rendue",
+      "stage": 4,
+      "row": 2,
+      "tag": "App.tsx",
+      "sources": [
+        {
+          "path": "src/app/App.tsx",
+          "line": 69,
+          "end_line": 96
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "fiches-compiler",
+      "from": "fiches",
+      "to": "compiler",
+      "label": "markdown brut",
+      "classification": "fichier source",
+      "variant": "default"
+    },
+    {
+      "id": "compiler-vite",
+      "from": "compiler",
+      "to": "vite",
+      "label": "concepts[]",
+      "classification": "module validé",
+      "variant": "emphasis"
+    },
+    {
+      "id": "lesson-vite",
+      "from": "lesson",
+      "to": "vite",
+      "label": "textes et étapes",
+      "classification": "module typé",
+      "variant": "default"
+    },
+    {
+      "id": "vite-bundle",
+      "from": "vite",
+      "to": "bundle",
+      "label": "JS + CSS minifiés",
+      "classification": "build",
+      "variant": "emphasis"
+    },
+    {
+      "id": "bundle-glossary",
+      "from": "bundle",
+      "to": "glossary",
+      "label": "fiches embarquées",
+      "classification": "lecture locale",
+      "variant": "default"
+    },
+    {
+      "id": "bundle-ui",
+      "from": "bundle",
+      "to": "ui",
+      "label": "textes et étapes",
+      "classification": "lecture locale",
+      "variant": "default"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Une seule source de vérité",
+      "items": [
+        "Les textes d’interface vivent dans lesson.ts",
+        "Les fiches du glossaire restent en Markdown lisible",
+        "Aucun composant ne recopie un texte éditorial"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Échec explicite",
+      "items": [
+        "parse() lève si un champ obligatoire manque",
+        "Le test de contenu bloque la CI avant le build",
+        "Une fiche incomplète ne peut pas être publiée"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Coût nul à l’exécution",
+      "items": [
+        "import.meta.glob résout le Markdown au build",
+        "Aucune requête réseau pour afficher le glossaire",
+        "Le bundle reste autonome hors ligne"
+      ]
+    }
+  ]
+}
