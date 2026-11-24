@@ -1,11 +1,14 @@
 import { formatDate } from '../shared/format'
 import type { StepId } from '../shared/steps'
+import { dataPoints, dataSnapshots } from './dataSnapshots'
 
 export type SourceRef = {
+  snapshotId: keyof typeof dataSnapshots
   publisher: string
   title: string
   url: string
   referencePeriod: string
+  publicationDate: string
   checkedAt: string
 }
 
@@ -37,15 +40,17 @@ export type StepContent = {
 export const lessonMeta = {
   moduleIndex: '01',
   moduleTitle: 'Prix et inflation',
-  revision: '2026-11-20',
+  revision: '2026-11-24',
 } as const
 
 export const primarySource: SourceRef = {
+  snapshotId: 'hcp-ipc-2026-10',
   publisher: 'Haut-Commissariat au Plan',
-  title: 'Indices des prix à la consommation',
-  url: 'https://www.hcp.ma/Indices-des-prix-a-la-consommation-IPC_r348.html',
-  referencePeriod: 'novembre 2026',
-  checkedAt: '2026-11-20',
+  title: dataSnapshots['hcp-ipc-2026-10'].title,
+  url: dataSnapshots['hcp-ipc-2026-10'].url,
+  referencePeriod: 'octobre 2026',
+  publicationDate: dataSnapshots['hcp-ipc-2026-10'].publicationDate,
+  checkedAt: dataSnapshots['hcp-ipc-2026-10'].retrievedAt,
 }
 
 export const simulationDisclaimer =
@@ -74,10 +79,10 @@ export const steps: Record<StepId, StepContent> = {
       ],
     },
     stats: [
-      { label: 'Panier exemple', value: '240 DH', hint: 'votre choix' },
-      { label: 'IPC national', value: 'Moyenne', hint: 'pondérée par le HCP' },
+      { label: 'Panier exemple', value: '240 DH', hint: 'exemple fixe · base mensuelle' },
+      { label: 'IPC national', value: '+1,9 %', hint: 'variation annuelle · octobre 2026' },
       { label: 'Source', value: 'HCP', hint: 'donnée officielle' },
-      { label: 'Révision', value: formatDate(lessonMeta.revision), hint: 'avant publication' },
+      { label: 'Révision', value: formatDate(lessonMeta.revision), hint: 'éditoriale' },
     ],
   },
   manipuler: {
@@ -106,16 +111,25 @@ export const steps: Record<StepId, StepContent> = {
 
 export const panierExample = {
   label: 'Votre panier',
-  description: 'Les produits, quantités et prix que vous choisissez.',
+  description: 'Exemple fixe de 240 DH pour illustrer un budget mensuel.',
   tag: 'Cas particulier',
 }
 
 export const ipcExample = {
   label: 'IPC national',
-  value: 'Moyenne',
-  description: 'Sélection représentative de ménages, avec des poids publiés par le HCP.',
+  value: '+1,9 %',
+  description: `Variation sur un an · octobre 2026 · ${dataPoints['ipc-national-yoy-2026-10'].geography}`,
   tag: 'Mesure officielle',
 }
+
+export const observedDataPointIds = [
+  'ipc-national-yoy-2026-10',
+  'food-yoy-2026-10',
+  'transport-yoy-2026-10',
+  'vegetables-mom-2026-10',
+] as const
+
+export const editorialReview = { status: 'to_review', reviewedAt: '2026-11-24' } as const
 
 export const tutorCopy = {
   initialMessage:
